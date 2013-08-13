@@ -1,4 +1,19 @@
 {
+  "name": "whitespace",
+  "version": "0.0.0",
   "main": "./lib/whitespace",
-  "description": "Strip trailing whitespace and add a trailing newline when the current editor is saved."
+  "description": "Strip trailing whitespace and add a trailing newline when the current editor is saved.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atom/whitespace.git"
+  },
+  "bugs": {
+    "url": "https://github.com/atom/whitespace/issues"
+  },
+  "engines": {
+    "atom": "*"
+  },
+  "publishConfig": {
+    "registry": "https://atom.iriscouch.com/registry/_design/app/_rewrite"
+  }
 }
