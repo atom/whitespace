@@ -52,6 +52,13 @@ describe "Whitespace", ->
       buffer.save()
       expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
 
+  it "does not trim trailing whitespace if trimTrailingWhitespace is false", ->
+    config.set("whitespace.trimTrailingWhitespace", false)
+
+    editor.insertText "don't trim me "
+    editor.getBuffer().save()
+    expect(editor.getText()).toBe "don't trim me \n"
+
   describe "whitespace.ensureSingleTrailingNewline config", ->
     [originalConfigValue] = []
     beforeEach ->
