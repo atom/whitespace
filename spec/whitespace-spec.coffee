@@ -52,8 +52,8 @@ describe "Whitespace", ->
       buffer.save()
       expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
 
-  it "does not trim trailing whitespace if trimTrailingWhitespace is false", ->
-    config.set("whitespace.trimTrailingWhitespace", false)
+  it "does not trim trailing whitespace if removeTrailingWhitespace is false", ->
+    config.set("whitespace.removeTrailingWhitespace", false)
 
     editor.insertText "don't trim me "
     editor.getBuffer().save()
