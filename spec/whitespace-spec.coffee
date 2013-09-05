@@ -8,12 +8,11 @@ describe "Whitespace", ->
     path = "/tmp/atom-whitespace.txt"
     fsUtils.writeSync(path, "")
     window.rootView = new RootView
-    rootView.open(path)
+    editor = project.open(path)
 
     atom.activatePackage('whitespace')
 
     rootView.focus()
-    editor = rootView.getActiveView()
 
   afterEach ->
     fsUtils.remove(path) if fsUtils.exists(path)
@@ -29,7 +28,7 @@ describe "Whitespace", ->
     expect(editor.getText()).toBe "foo\nbar\n\nbaz"
 
     # works for buffers that are opened after extension is initialized
-    rootView.open(require.resolve('fixtures/sample.txt'))
+    editor = project.open(require.resolve('fixtures/sample.txt'))
     editor.moveCursorToEndOfLine()
     editor.insertText("           ")
 
@@ -94,19 +93,19 @@ describe "Whitespace", ->
       grammar = syntax.addGrammar.argsForCall[0][0]
 
     it "trims GFM text with a single space", ->
-      editor.activeEditSession.setGrammar(grammar)
+      editor.setGrammar(grammar)
       editor.insertText "foo \nline break!"
       editor.getBuffer().save()
       expect(editor.getText()).toBe "foo\nline break!\n"
 
     it "leaves GFM text with double spaces alone", ->
-      editor.activeEditSession.setGrammar(grammar)
+      editor.setGrammar(grammar)
       editor.insertText "foo  \nline break!"
       editor.getBuffer().save()
       expect(editor.getText()).toBe "foo  \nline break!\n"
 
     it "trims GFM text with a more than two spaces", ->
-      editor.activeEditSession.setGrammar(grammar)
+      editor.setGrammar(grammar)
       editor.insertText "foo   \nline break!"
       editor.getBuffer().save()
       expect(editor.getText()).toBe "foo\nline break!\n"
