@@ -1,9 +1,9 @@
 module.exports =
-  activate: ->
-    rootView.eachEditSession (editSession) => @whitespaceBeforeSave(editSession)
-
   configDefaults:
     ensureSingleTrailingNewline: true
+
+  activate: ->
+    rootView.eachEditSession (editSession) => @whitespaceBeforeSave(editSession)
 
   whitespaceBeforeSave: (editSession) ->
     buffer = editSession.buffer
