@@ -2,13 +2,14 @@ RootView = require 'root-view'
 fsUtils = require 'fs-utils'
 
 describe "Whitespace", ->
-  [editor, path] = []
+  [editor, buffer, path] = []
 
   beforeEach ->
     path = "/tmp/atom-whitespace.txt"
     fsUtils.writeSync(path, "")
     window.rootView = new RootView
     editor = project.open(path)
+    buffer = editor.getBuffer()
 
     atom.activatePackage('whitespace')
 
@@ -34,6 +35,23 @@ describe "Whitespace", ->
 
     editor.getBuffer().save()
     expect(editor.getText()).toBe 'Some text.\n'
+
+  describe "when the edit session is destroyed", ->
+    beforeEach ->
+      spyOn(fsUtils, 'write')
+      config.set("whitespace.ensureSingleTrailingNewline", false)
+
+      buffer = editor.getBuffer()
+      buffer.retain()
+      editor.destroy()
+
+    afterEach ->
+      buffer.release()
+
+    it "unsubscribes from the buffer", ->
+      buffer.setText("foo   \nbar\t   \n\nbaz")
+      buffer.save()
+      expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
 
   describe "whitespace.ensureSingleTrailingNewline config", ->
     [originalConfigValue] = []

@@ -7,7 +7,7 @@ module.exports =
 
   whitespaceBeforeSave: (editSession) ->
     buffer = editSession.buffer
-    buffer.on 'will-be-saved', ->
+    saveHandler = ->
       buffer.transact ->
         buffer.scan /[ \t]+$/g, ({match, replace}) ->
           # GFM permits two whitespaces at the end of a line--trim anything else
@@ -23,3 +23,6 @@ module.exports =
             selectedBufferRanges = editSession.getSelectedBufferRanges()
             buffer.append('\n')
             editSession.setSelectedBufferRanges(selectedBufferRanges)
+
+    buffer.on('will-be-saved', saveHandler)
+    editSession.on 'destroyed', -> buffer.off('will-be-saved', saveHandler)
