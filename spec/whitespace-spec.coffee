@@ -1,4 +1,3 @@
-RootView = require 'root-view'
 fsUtils = require 'fs-utils'
 
 describe "Whitespace", ->
@@ -7,13 +6,10 @@ describe "Whitespace", ->
   beforeEach ->
     path = "/tmp/atom-whitespace.txt"
     fsUtils.writeSync(path, "")
-    window.rootView = new RootView
     editor = project.open(path)
     buffer = editor.getBuffer()
 
     atom.activatePackage('whitespace')
-
-    rootView.focus()
 
   afterEach ->
     fsUtils.remove(path) if fsUtils.exists(path)
