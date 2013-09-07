@@ -56,7 +56,7 @@ describe "Whitespace", ->
     config.set("whitespace.removeTrailingWhitespace", false)
 
     editor.insertText "don't trim me "
-    editor.getBuffer().save()
+    editor.save()
     expect(editor.getText()).toBe "don't trim me \n"
 
   describe "whitespace.ensureSingleTrailingNewline config", ->
