@@ -1,21 +1,21 @@
-fsUtils = require 'fs-utils'
+{fs} = require 'atom-api'
 
 describe "Whitespace", ->
   [editor, buffer, path] = []
 
   beforeEach ->
     path = "/tmp/atom-whitespace.txt"
-    fsUtils.writeSync(path, "")
+    fs.writeSync(path, "")
     editor = project.open(path)
     buffer = editor.getBuffer()
 
     atom.activatePackage('whitespace')
 
   afterEach ->
-    fsUtils.remove(path) if fsUtils.exists(path)
+    fs.remove(path) if fs.exists(path)
 
   it "strips trailing whitespace before an editor saves a buffer", ->
-    spyOn(fsUtils, 'write')
+    spyOn(fs, 'write')
 
     config.set("whitespace.ensureSingleTrailingNewline", false)
 
@@ -34,7 +34,7 @@ describe "Whitespace", ->
 
   describe "when the edit session is destroyed", ->
     beforeEach ->
-      spyOn(fsUtils, 'write')
+      spyOn(fs, 'write')
       config.set("whitespace.ensureSingleTrailingNewline", false)
 
       buffer.retain()
