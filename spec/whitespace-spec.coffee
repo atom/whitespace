@@ -25,7 +25,7 @@ describe "Whitespace", ->
     expect(editor.getText()).toBe "foo\nbar\n\nbaz"
 
     # works for buffers that are opened after extension is initialized
-    editor = project.open(require.resolve('fixtures/sample.txt'))
+    editor = project.open('sample.txt')
     editor.moveCursorToEndOfLine()
     editor.insertText("           ")
 
