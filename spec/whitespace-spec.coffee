@@ -1,4 +1,4 @@
-{fs} = require 'atom-api'
+{fs} = require 'atom'
 
 describe "Whitespace", ->
   [editor, buffer, path] = []
