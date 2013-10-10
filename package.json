@@ -1,6 +1,6 @@
 {
   "name": "whitespace",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "main": "./lib/whitespace",
   "description": "Strip trailing whitespace and add a trailing newline when the current editor is saved.",
   "repository": {
