@@ -1,18 +1,23 @@
+path = require 'path'
 {fs} = require 'atom'
+temp = require 'temp'
 
 describe "Whitespace", ->
-  [editor, buffer, path] = []
+  [editor, buffer, filePath, directory] = []
 
   beforeEach ->
-    path = "/tmp/atom-whitespace.txt"
-    fs.writeSync(path, "")
-    editor = project.open(path)
+    directory = temp.mkdirSync()
+    project.setPath(directory)
+    filePath = path.join(directory, 'atom-whitespace.txt')
+    fs.writeSync(filePath, '')
+    fs.writeSync(path.join(directory, 'sample.txt'), 'Some text.\n')
+    editor = project.open(filePath)
     buffer = editor.getBuffer()
 
     atom.activatePackage('whitespace')
 
   afterEach ->
-    fs.remove(path) if fs.exists(path)
+    fs.remove(filePath) if fs.exists(filePath)
 
   it "strips trailing whitespace before an editor saves a buffer", ->
     spyOn(fs, 'write')
