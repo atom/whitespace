@@ -11,7 +11,7 @@ describe "Whitespace", ->
     filePath = path.join(directory, 'atom-whitespace.txt')
     fs.writeSync(filePath, '')
     fs.writeSync(path.join(directory, 'sample.txt'), 'Some text.\n')
-    editor = project.open(filePath)
+    editor = project.openSync(filePath)
     buffer = editor.getBuffer()
 
     atom.activatePackage('whitespace')
@@ -30,7 +30,7 @@ describe "Whitespace", ->
     expect(editor.getText()).toBe "foo\nbar\n\nbaz"
 
     # works for buffers that are opened after extension is initialized
-    editor = project.open('sample.txt')
+    editor = project.openSync('sample.txt')
     editor.moveCursorToEndOfLine()
     editor.insertText("           ")
 
