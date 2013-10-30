@@ -113,7 +113,7 @@ describe "Whitespace", ->
 
     beforeEach ->
       spyOn(syntax, "addGrammar").andCallThrough()
-      atom.activatePackage("gfm")
+      atom.activatePackage("language-gfm", sync: true)
       expect(syntax.addGrammar).toHaveBeenCalled()
       grammar = syntax.addGrammar.argsForCall[0][0]
 
