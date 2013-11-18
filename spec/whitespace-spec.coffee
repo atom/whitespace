@@ -3,7 +3,7 @@ path = require 'path'
 temp = require 'temp'
 
 describe "Whitespace", ->
-  [editor, buffer, filePath, directory] = []
+  [editor, buffer] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
@@ -16,12 +16,7 @@ describe "Whitespace", ->
 
     atom.activatePackage('whitespace')
 
-  afterEach ->
-    fs.remove(filePath) if fs.exists(filePath)
-
   it "strips trailing whitespace before an editor saves a buffer", ->
-    spyOn(fs, 'write')
-
     config.set("whitespace.ensureSingleTrailingNewline", false)
 
     # works for buffers that are already open when extension is initialized
@@ -39,7 +34,6 @@ describe "Whitespace", ->
 
   describe "when the edit session is destroyed", ->
     beforeEach ->
-      spyOn(fs, 'write')
       config.set("whitespace.ensureSingleTrailingNewline", false)
 
       buffer.retain()
