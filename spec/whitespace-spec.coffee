@@ -9,8 +9,8 @@ describe "Whitespace", ->
     directory = temp.mkdirSync()
     project.setPath(directory)
     filePath = path.join(directory, 'atom-whitespace.txt')
-    fs.writeSync(filePath, '')
-    fs.writeSync(path.join(directory, 'sample.txt'), 'Some text.\n')
+    fs.writeFileSync(filePath, '')
+    fs.writeFileSync(path.join(directory, 'sample.txt'), 'Some text.\n')
     editor = project.openSync(filePath)
     buffer = editor.getBuffer()
 
