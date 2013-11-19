@@ -7,17 +7,17 @@ describe "Whitespace", ->
 
   beforeEach ->
     directory = temp.mkdirSync()
-    project.setPath(directory)
+    atom.project.setPath(directory)
     filePath = path.join(directory, 'atom-whitespace.txt')
     fs.writeFileSync(filePath, '')
     fs.writeFileSync(path.join(directory, 'sample.txt'), 'Some text.\n')
-    editor = project.openSync(filePath)
+    editor = atom.project.openSync(filePath)
     buffer = editor.getBuffer()
 
-    atom.activatePackage('whitespace')
+    atom.packages.activatePackage('whitespace')
 
   it "strips trailing whitespace before an editor saves a buffer", ->
-    config.set("whitespace.ensureSingleTrailingNewline", false)
+    atom.config.set("whitespace.ensureSingleTrailingNewline", false)
 
     # works for buffers that are already open when extension is initialized
     editor.insertText("foo   \nbar\t   \n\nbaz")
@@ -25,7 +25,7 @@ describe "Whitespace", ->
     expect(editor.getText()).toBe "foo\nbar\n\nbaz"
 
     # works for buffers that are opened after extension is initialized
-    editor = project.openSync('sample.txt')
+    editor = atom.project.openSync('sample.txt')
     editor.moveCursorToEndOfLine()
     editor.insertText("           ")
 
@@ -34,7 +34,7 @@ describe "Whitespace", ->
 
   describe "when the edit session is destroyed", ->
     beforeEach ->
-      config.set("whitespace.ensureSingleTrailingNewline", false)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", false)
 
       buffer.retain()
       editor.destroy()
@@ -48,7 +48,7 @@ describe "Whitespace", ->
       expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
 
   it "does not trim trailing whitespace if removeTrailingWhitespace is false", ->
-    config.set("whitespace.removeTrailingWhitespace", false)
+    atom.config.set("whitespace.removeTrailingWhitespace", false)
 
     editor.insertText "don't trim me "
     editor.save()
@@ -57,11 +57,11 @@ describe "Whitespace", ->
   describe "whitespace.ensureSingleTrailingNewline config", ->
     [originalConfigValue] = []
     beforeEach ->
-      originalConfigValue = config.get("whitespace.ensureSingleTrailingNewline")
+      originalConfigValue = atom.config.get("whitespace.ensureSingleTrailingNewline")
       expect(originalConfigValue).toBe true
 
     afterEach ->
-      config.set("whitespace.ensureSingleTrailingNewline", originalConfigValue)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", originalConfigValue)
 
     it "adds a trailing newline when there is no trailing newline", ->
       editor.insertText "foo"
@@ -89,7 +89,7 @@ describe "Whitespace", ->
       expect(editor.getText()).toBe "\n"
 
     it "does not add trailing newline if ensureSingleTrailingNewline is false", ->
-      config.set("whitespace.ensureSingleTrailingNewline", false)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", false)
 
       editor.insertText "no trailing newline"
       editor.save()
@@ -106,10 +106,10 @@ describe "Whitespace", ->
     grammar = null
 
     beforeEach ->
-      spyOn(syntax, "addGrammar").andCallThrough()
-      atom.activatePackage("language-gfm", sync: true)
-      expect(syntax.addGrammar).toHaveBeenCalled()
-      grammar = syntax.addGrammar.argsForCall[0][0]
+      spyOn(atom.syntax, "addGrammar").andCallThrough()
+      atom.packages.activatePackage("language-gfm", sync: true)
+      expect(atom.syntax.addGrammar).toHaveBeenCalled()
+      grammar = atom.syntax.addGrammar.argsForCall[0][0]
 
     it "trims GFM text with a single space", ->
       editor.setGrammar(grammar)
