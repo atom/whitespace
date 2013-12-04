@@ -3,13 +3,7 @@
   "version": "0.10.0",
   "main": "./lib/whitespace",
   "description": "Strip trailing whitespace and add a trailing newline when the current editor is saved.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/atom/whitespace.git"
-  },
-  "bugs": {
-    "url": "https://github.com/atom/whitespace/issues"
-  },
+  "repository": "https://github.com/atom/whitespace",
   "engines": {
     "atom": "*"
   },
