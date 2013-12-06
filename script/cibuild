@@ -22,7 +22,7 @@ curl -L `cat asset_url` \
 echo "Complete"
 
 mkdir atom
-unzip atom.zip -d atom
+unzip -q atom.zip -d atom
 
 echo "Running tests..."
 atom/atom/Contents/Resources/app/node_modules/apm test
