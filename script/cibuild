@@ -6,16 +6,16 @@ export PATH=$PATH:node-v0.10.22-darwin-x64/bin/
 echo "Fetched Node"
 
 # Request releases
-curl -O https://api.github.com/repos/atom/atom/releases -H 'Authorization: token 9a30c699f5f086e2f6d1ee24dabe4f3e5628f2b1'
+curl -s -O https://api.github.com/repos/atom/atom/releases -H 'Authorization: token 9a30c699f5f086e2f6d1ee24dabe4f3e5628f2b1'
 node -e "fs = require('fs');console.log(JSON.parse(fs.readFileSync('releases'))[1].assets_url);" > release_url
 
 # Request release
-curl -O `cat release_url` -H 'Authorization: token 9a30c699f5f086e2f6d1ee24dabe4f3e5628f2b1'
+curl -s -O `cat release_url` -H 'Authorization: token 9a30c699f5f086e2f6d1ee24dabe4f3e5628f2b1'
 node -e "fs = require('fs');console.log(JSON.parse(fs.readFileSync('assets'))[0].url);" > asset_url
 
 # Request asset
-echo -n "Fetching Atom..."
-curl -L `cat asset_url` \
+echo "Fetching Atom..."
+curl -s -L `cat asset_url` \
   -u '9a30c699f5f086e2f6d1ee24dabe4f3e5628f2b1:x-oauth-basic' \
   -H 'Accept: application/octet-stream' \
   -o atom.zip
@@ -25,12 +25,6 @@ mkdir atom
 unzip -q atom.zip -d atom
 
 echo "Running tests..."
-ls atom
-ls atom/Atom.app
-ls atom/Atom.app/Contents/
-ls atom/Atom.app/Contents/Resources/
-ls atom/Atom.app/Contents/Resources/app/
-ls atom/Atom.app/Contents/Resources/app/node_modules
-atom/Atom.app/Contents/Resources/app/node_modules/apm test
+atom/Atom.app/Contents/Resources/app/node_modules/.bin/apm test
 
 exit
