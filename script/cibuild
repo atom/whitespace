@@ -27,6 +27,6 @@ echo "Grab dependencies"
 atom/Atom.app/Contents/Resources/app/node_modules/.bin/apm update
 
 echo "Running tests..."
-atom/Atom.app/Contents/Resources/app/node_modules/.bin/apm test --path atom/Atom.app/Contents/Resources/app/atom.sh
+ATOM_PATH=./atom/Atom.app atom/Atom.app/Contents/Resources/app/node_modules/.bin/apm test --path atom/Atom.app/Contents/Resources/app/atom.sh
 
 exit
