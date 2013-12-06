@@ -26,11 +26,11 @@ unzip -q atom.zip -d atom
 
 echo "Running tests..."
 ls atom
-ls atom/Atom
-ls atom/Atom/Contents/
-ls atom/Atom/Contents/Resources/
-ls atom/Atom/Contents/Resources/app/
-ls atom/Atom/Contents/Resources/app/node_modules
-atom/Atom/Contents/Resources/app/node_modules/apm test
+ls atom/Atom.app
+ls atom/Atom.app/Contents/
+ls atom/Atom.app/Contents/Resources/
+ls atom/Atom.app/Contents/Resources/app/
+ls atom/Atom.app/Contents/Resources/app/node_modules
+atom/Atom.app/Contents/Resources/app/node_modules/apm test
 
 exit
