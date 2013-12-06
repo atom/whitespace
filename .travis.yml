@@ -1,7 +1,9 @@
 language: objective-c
-#before_install: "brew install node"
-before_install: "system_profiler -detailLevel mini"
-install: ""
+before_install: ""
+install:
+  - "curl -O http://nodejs.org/dist/v0.10.22/node-v0.10.22-darwin-x64.tar.gz"
+  - "tar -zxvf node-v0.10.22-darwin-x64.tar.gz"
+  - "export PATH=$PATH:~/node-v0.10.22-darwin-x64/bin/"
 before_script: "node -v"
 script: "./script/cibuild"
 cache:
