@@ -1,6 +1,6 @@
 #!/bin/sh
 
-curl -O http://nodejs.org/dist/v0.10.22/node-v0.10.22-darwin-x64.tar.gz
+curl -s -O http://nodejs.org/dist/v0.10.22/node-v0.10.22-darwin-x64.tar.gz
 tar -zxf node-v0.10.22-darwin-x64.tar.gz
 export PATH=$PATH:node-v0.10.22-darwin-x64/bin/
 echo "Fetched Node"
@@ -19,11 +19,12 @@ curl -s -L `cat asset_url` \
   -u '9a30c699f5f086e2f6d1ee24dabe4f3e5628f2b1:x-oauth-basic' \
   -H 'Accept: application/octet-stream' \
   -o atom.zip
-echo "Complete"
 
 mkdir atom
 unzip -q atom.zip -d atom
 
+pwd
+ls
 echo "Running tests..."
 atom/Atom.app/Contents/Resources/app/node_modules/.bin/apm test
 
