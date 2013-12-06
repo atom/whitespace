@@ -1,5 +1,7 @@
 language: objective-c
-before_install: "brew install node"
+#before_install: "brew install node"
+before_install: "system_profiler -detailLevel mini"
+install: ""
 before_script: "node -v"
 script: "./script/cibuild"
 cache:
