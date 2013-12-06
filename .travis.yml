@@ -1,9 +1,10 @@
 language: objective-c
+before_install: "brew install node"
 before_script: "node -v"
 script: "./script/cibuild"
 cache:
   directories:
   - tmp
-env:
-  - VERSION=master
-  - VERSION=released
+#env:
+#  - VERSION=master
+#  - VERSION=released
