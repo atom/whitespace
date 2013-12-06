@@ -1,7 +1,7 @@
 #!/bin/sh
 
 curl -O http://nodejs.org/dist/v0.10.22/node-v0.10.22-darwin-x64.tar.gz
-tar -zxvf node-v0.10.22-darwin-x64.tar.gz
+tar -zxf node-v0.10.22-darwin-x64.tar.gz
 export PATH=$PATH:node-v0.10.22-darwin-x64/bin/
 echo "Fetched Node"
 
@@ -25,6 +25,12 @@ mkdir atom
 unzip -q atom.zip -d atom
 
 echo "Running tests..."
-atom/atom/Contents/Resources/app/node_modules/apm test
+ls atom
+ls atom/Atom
+ls atom/Atom/Contents/
+ls atom/Atom/Contents/Resources/
+ls atom/Atom/Contents/Resources/app/
+ls atom/Atom/Contents/Resources/app/node_modules
+atom/Atom/Contents/Resources/app/node_modules/apm test
 
 exit
