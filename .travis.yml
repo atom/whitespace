@@ -1,18 +1,8 @@
 language: objective-c
-before_install: ""
-install:
-  - "curl -O http://nodejs.org/dist/v0.10.22/node-v0.10.22-darwin-x64.tar.gz"
-  - "tar -zxvf node-v0.10.22-darwin-x64.tar.gz"
-before_script: "node -v"
 script: "./script/cibuild"
-after_script:
-  - cwd
-  - export
 cache:
   directories:
-  - tmp
-env:
-  - PATH=$PATH:node-v0.10.22-darwin-x64/bin/
+    - tmp
 #env:
 #  - VERSION=master
 #  - VERSION=released

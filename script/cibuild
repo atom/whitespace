@@ -1,3 +1,30 @@
 #!/bin/sh
 
-echo "Hello World"
+curl -O http://nodejs.org/dist/v0.10.22/node-v0.10.22-darwin-x64.tar.gz
+tar -zxvf node-v0.10.22-darwin-x64.tar.gz
+export PATH=$PATH:node-v0.10.22-darwin-x64/bin/
+echo "Fetched Node"
+
+# Request releases
+curl -O https://api.github.com/repos/atom/atom/releases -H 'Authorization: token 9a30c699f5f086e2f6d1ee24dabe4f3e5628f2b1'
+node -e "fs = require('fs');console.log(JSON.parse(fs.readFileSync('releases'))[1].assets_url);" > release_url
+
+# Request release
+curl -O `cat release_url` -H 'Authorization: token 9a30c699f5f086e2f6d1ee24dabe4f3e5628f2b1'
+node -e "fs = require('fs');console.log(JSON.parse(fs.readFileSync('assets'))[0].url);" > asset_url
+
+# Request asset
+echo -n "Fetching Atom..."
+curl -L `cat asset_url` \
+  -u '9a30c699f5f086e2f6d1ee24dabe4f3e5628f2b1:x-oauth-basic' \
+  -H 'Accept: application/octet-stream' \
+  -o atom.zip
+echo "Complete"
+
+mkdir atom
+unzip atom.zip -d atom
+
+echo "Running tests..."
+atom/atom/Contents/Resources/app/node_modules/apm test
+
+exit
