@@ -1,6 +1,5 @@
-language: node_js
-node_js:
- - "0.10"
+language: objective_c
+before_script: "node -v"
 script: "./script/cibuild"
 cache:
   directories:
