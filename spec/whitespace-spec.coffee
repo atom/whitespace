@@ -14,7 +14,8 @@ describe "Whitespace", ->
     editor = atom.project.openSync(filePath)
     buffer = editor.getBuffer()
 
-    atom.packages.activatePackage('whitespace')
+    waitsForPromise ->
+      atom.packages.activatePackage('whitespace')
 
   it "strips trailing whitespace before an editor saves a buffer", ->
     atom.config.set("whitespace.ensureSingleTrailingNewline", false)
