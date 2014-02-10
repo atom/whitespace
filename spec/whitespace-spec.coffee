@@ -108,9 +108,13 @@ describe "Whitespace", ->
 
     beforeEach ->
       spyOn(atom.syntax, "addGrammar").andCallThrough()
-      atom.packages.activatePackage("language-gfm", sync: true)
-      expect(atom.syntax.addGrammar).toHaveBeenCalled()
-      grammar = atom.syntax.addGrammar.argsForCall[0][0]
+
+      waitsForPromise ->
+        atom.packages.activatePackage("language-gfm")
+
+      runs ->
+        expect(atom.syntax.addGrammar).toHaveBeenCalled()
+        grammar = atom.syntax.addGrammar.argsForCall[0][0]
 
     it "trims GFM text with a single space", ->
       editor.setGrammar(grammar)
