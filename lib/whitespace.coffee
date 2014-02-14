@@ -5,7 +5,7 @@ module.exports =
 
   activate: ->
     @editorSubscription = atom.workspace.eachEditor (editor) ->
-      bufferSubscription = editor.getBuffer().on 'will-be-saved', (buffer) ->
+      bufferSubscription = editor.on 'will-be-saved', ->
         editor.transact ->
           if atom.config.get('whitespace.removeTrailingWhitespace')
             removeTrailingWhitespace(editor)
