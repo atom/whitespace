@@ -1,5 +1,5 @@
 path = require 'path'
-{fs} = require 'atom'
+{fs, WorkspaceView} = require 'atom'
 temp = require 'temp'
 
 describe "Whitespace", ->
@@ -8,10 +8,12 @@ describe "Whitespace", ->
   beforeEach ->
     directory = temp.mkdirSync()
     atom.project.setPath(directory)
+    atom.workspaceView = new WorkspaceView()
+    atom.workspace = atom.workspaceView.model
     filePath = path.join(directory, 'atom-whitespace.txt')
     fs.writeFileSync(filePath, '')
     fs.writeFileSync(path.join(directory, 'sample.txt'), 'Some text.\n')
-    editor = atom.project.openSync(filePath)
+    editor = atom.workspace.openSync(filePath)
     buffer = editor.getBuffer()
 
     waitsForPromise ->

@@ -4,7 +4,7 @@ module.exports =
     ensureSingleTrailingNewline: true
 
   activate: ->
-    @editorSubscription = atom.project.eachEditor (editor) ->
+    @editorSubscription = atom.workspace.eachEditor (editor) ->
       bufferSubscription = editor.getBuffer().on 'will-be-saved', (buffer) ->
         buffer.transact ->
           if atom.config.get('whitespace.removeTrailingWhitespace')
