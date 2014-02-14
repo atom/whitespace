@@ -24,7 +24,7 @@ class Whitespace
       @unsubscribe(editor)
 
   removeTrailingWhitespace: (editor) ->
-    editor.getBuffer().scan /[ \t]+$/g, ({lineText, match, replace}) ->
+    editor.scan /[ \t]+$/g, ({lineText, match, replace}) ->
       if editor.getGrammar().scopeName is 'source.gfm'
         # GitHub Flavored Markdown permits two spaces at the end of a line
         [whitespace] = match
