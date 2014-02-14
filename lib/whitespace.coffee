@@ -6,19 +6,22 @@ class Whitespace
 
   constructor: ->
     atom.workspace.eachEditor (editor) =>
-      @subscribe editor, 'will-be-saved', =>
-        editor.transact =>
-          if atom.config.get('whitespace.removeTrailingWhitespace')
-            @removeTrailingWhitespace(editor)
-
-          if atom.config.get('whitespace.ensureSingleTrailingNewline')
-            @ensureSingleTrailingNewline(editor)
-
-      @subscribe editor, 'destroyed', =>
-        @unsubscribe(editor)
+      @handleEditorEvents(editor)
 
   destroy: ->
     @unsubscribe()
+
+  handleEditorEvents: (editor) ->
+    @subscribe editor, 'will-be-saved', =>
+      editor.transact =>
+        if atom.config.get('whitespace.removeTrailingWhitespace')
+          @removeTrailingWhitespace(editor)
+
+        if atom.config.get('whitespace.ensureSingleTrailingNewline')
+          @ensureSingleTrailingNewline(editor)
+
+    @subscribe editor, 'destroyed', =>
+      @unsubscribe(editor)
 
   removeTrailingWhitespace: (editor) ->
     editor.getBuffer().scan /[ \t]+$/g, ({match, replace}) ->
