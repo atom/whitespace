@@ -33,11 +33,13 @@ class Whitespace
         replace('')
 
   ensureSingleTrailingNewline: (editor) ->
-    buffer = editor.getBuffer()
-    if buffer.getLastLine() is ''
-      row = buffer.getLastRow() - 1
-      buffer.deleteRow(row--) while row and buffer.lineForRow(row) is ''
+    lastRow = editor.getLastBufferRow()
+    lastLine = editor.lineForBufferRow(lastRow)
+    if lastLine is ''
+      row = lastRow - 1
+      while row and editor.lineForBufferRow(row) is ''
+        editor.deleteBufferRow(row--)
     else
       selectedBufferRanges = editor.getSelectedBufferRanges()
-      buffer.append('\n')
+      editor.appendText('\n')
       editor.setSelectedBufferRanges(selectedBufferRanges)
