@@ -1,19 +1,24 @@
+{Subscriber} = require 'emissary'
+
 module.exports =
 class Whitespace
+  Subscriber.includeInto(this)
+
   constructor: ->
-    @editorSubscription = atom.workspace.eachEditor (editor) ->
-      bufferSubscription = editor.on 'will-be-saved', ->
-        editor.transact ->
+    atom.workspace.eachEditor (editor) =>
+      @subscribe editor, 'will-be-saved', =>
+        editor.transact =>
           if atom.config.get('whitespace.removeTrailingWhitespace')
-            removeTrailingWhitespace(editor)
+            @removeTrailingWhitespace(editor)
 
           if atom.config.get('whitespace.ensureSingleTrailingNewline')
-            ensureSingleTrailingNewline(editor)
+            @ensureSingleTrailingNewline(editor)
 
-      editor.on 'destroyed', -> bufferSubscription.off()
+      @subscribe editor, 'destroyed', =>
+        @unsubscribe(editor)
 
   destroy: ->
-    @editorSubscription.off()
+    @unsubscribe()
 
   removeTrailingWhitespace: (editor) ->
     editor.getBuffer().scan /[ \t]+$/g, ({match, replace}) ->
