@@ -93,10 +93,10 @@ describe "Whitespace", ->
       expect(editor.getText()).toBe "no trailing newline"
 
     it "does not move the cursor when the new line is added", ->
-      editor.insertText "foo"
-      expect(editor.getCursorBufferPosition()).toEqual([0,3])
+      editor.insertText "foo\nboo"
+      editor.setCursorBufferPosition([0,3])
       editor.save()
-      expect(editor.getText()).toBe "foo\n"
+      expect(editor.getText()).toBe "foo\nboo\n"
       expect(editor.getCursorBufferPosition()).toEqual([0,3])
 
   describe "GFM whitespace trimming", ->
