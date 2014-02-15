@@ -35,15 +35,9 @@ describe "Whitespace", ->
     editor.save()
     expect(editor.getText()).toBe 'Some text.\n'
 
-  describe "when the edit session is destroyed", ->
+  describe "when the editor is destroyed", ->
     beforeEach ->
-      atom.config.set("whitespace.ensureSingleTrailingNewline", false)
-
-      buffer.retain()
       editor.destroy()
-
-    afterEach ->
-      buffer.release()
 
     it "unsubscribes from the buffer", ->
       buffer.setText("foo   \nbar\t   \n\nbaz")
