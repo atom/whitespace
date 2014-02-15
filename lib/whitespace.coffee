@@ -6,40 +6,37 @@ class Whitespace
 
   constructor: ->
     atom.workspace.eachEditor (editor) =>
-      @handleEditorEvents(editor)
+      @handleBufferEvents(editor)
 
   destroy: ->
     @unsubscribe()
 
-  handleEditorEvents: (editor) ->
-    @subscribe editor, 'will-be-saved', =>
-      editor.transact =>
+  handleBufferEvents: (editor) ->
+    buffer = editor.getBuffer()
+    @subscribe buffer, 'will-be-saved', =>
+      buffer.transact =>
         if atom.config.get('whitespace.removeTrailingWhitespace')
-          @removeTrailingWhitespace(editor)
+          @removeTrailingWhitespace(buffer, editor.getGrammar().scopeName)
 
         if atom.config.get('whitespace.ensureSingleTrailingNewline')
-          @ensureSingleTrailingNewline(editor)
+          @ensureSingleTrailingNewline(buffer)
 
-    @subscribe editor, 'destroyed', =>
-      @unsubscribe(editor)
+    @subscribe buffer, 'destroyed', =>
+      @unsubscribe(buffer)
 
-  removeTrailingWhitespace: (editor) ->
-    editor.scan /[ \t]+$/g, ({lineText, match, replace}) ->
-      if editor.getGrammar().scopeName is 'source.gfm'
+  removeTrailingWhitespace: (buffer, grammarScopeName) ->
+    buffer.scan /[ \t]+$/g, ({lineText, match, replace}) ->
+      if grammarScopeName is 'source.gfm'
         # GitHub Flavored Markdown permits two spaces at the end of a line
         [whitespace] = match
         replace('') unless whitespace is '  ' and whitespace isnt lineText
       else
         replace('')
 
-  ensureSingleTrailingNewline: (editor) ->
-    lastRow = editor.getLastBufferRow()
-    lastLine = editor.lineForBufferRow(lastRow)
-    if lastLine is ''
+  ensureSingleTrailingNewline: (buffer) ->
+    lastRow = buffer.getLastRow()
+    if buffer.lineForRow(lastRow) is ''
       row = lastRow - 1
-      while row and editor.lineForBufferRow(row) is ''
-        editor.deleteBufferRow(row--)
+      buffer.deleteRow(row--) while row and buffer.lineForRow(row) is ''
     else
-      selectedBufferRanges = editor.getSelectedBufferRanges()
-      editor.appendText('\n')
-      editor.setSelectedBufferRanges(selectedBufferRanges)
+      buffer.append('\n')
