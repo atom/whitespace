@@ -22,12 +22,12 @@ describe "Whitespace", ->
   it "strips trailing whitespace before an editor saves a buffer", ->
     atom.config.set("whitespace.ensureSingleTrailingNewline", false)
 
-    # works for buffers that are already open when extension is initialized
+    # works for buffers that are already open when package is initialized
     editor.insertText("foo   \nbar\t   \n\nbaz")
     editor.save()
     expect(editor.getText()).toBe "foo\nbar\n\nbaz"
 
-    # works for buffers that are opened after extension is initialized
+    # works for buffers that are opened after package is initialized
     editor = atom.project.openSync('sample.txt')
     editor.moveCursorToEndOfLine()
     editor.insertText("           ")
