@@ -1,5 +1,5 @@
 path = require 'path'
-{fs} = require 'atom'
+{fs, WorkspaceView} = require 'atom'
 temp = require 'temp'
 
 describe "Whitespace", ->
@@ -8,10 +8,12 @@ describe "Whitespace", ->
   beforeEach ->
     directory = temp.mkdirSync()
     atom.project.setPath(directory)
+    atom.workspaceView = new WorkspaceView()
+    atom.workspace = atom.workspaceView.model
     filePath = path.join(directory, 'atom-whitespace.txt')
     fs.writeFileSync(filePath, '')
     fs.writeFileSync(path.join(directory, 'sample.txt'), 'Some text.\n')
-    editor = atom.project.openSync(filePath)
+    editor = atom.workspace.openSync(filePath)
     buffer = editor.getBuffer()
 
     waitsForPromise ->
@@ -20,12 +22,12 @@ describe "Whitespace", ->
   it "strips trailing whitespace before an editor saves a buffer", ->
     atom.config.set("whitespace.ensureSingleTrailingNewline", false)
 
-    # works for buffers that are already open when extension is initialized
+    # works for buffers that are already open when package is initialized
     editor.insertText("foo   \nbar\t   \n\nbaz")
     editor.save()
     expect(editor.getText()).toBe "foo\nbar\n\nbaz"
 
-    # works for buffers that are opened after extension is initialized
+    # works for buffers that are opened after package is initialized
     editor = atom.project.openSync('sample.txt')
     editor.moveCursorToEndOfLine()
     editor.insertText("           ")
@@ -33,15 +35,9 @@ describe "Whitespace", ->
     editor.save()
     expect(editor.getText()).toBe 'Some text.\n'
 
-  describe "when the edit session is destroyed", ->
+  describe "when the editor is destroyed", ->
     beforeEach ->
-      atom.config.set("whitespace.ensureSingleTrailingNewline", false)
-
-      buffer.retain()
       editor.destroy()
-
-    afterEach ->
-      buffer.release()
 
     it "unsubscribes from the buffer", ->
       buffer.setText("foo   \nbar\t   \n\nbaz")
@@ -97,10 +93,10 @@ describe "Whitespace", ->
       expect(editor.getText()).toBe "no trailing newline"
 
     it "does not move the cursor when the new line is added", ->
-      editor.insertText "foo"
-      expect(editor.getCursorBufferPosition()).toEqual([0,3])
+      editor.insertText "foo\nboo"
+      editor.setCursorBufferPosition([0,3])
       editor.save()
-      expect(editor.getText()).toBe "foo\n"
+      expect(editor.getText()).toBe "foo\nboo\n"
       expect(editor.getCursorBufferPosition()).toEqual([0,3])
 
   describe "GFM whitespace trimming", ->

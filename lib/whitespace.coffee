@@ -1,38 +1,42 @@
+{Subscriber} = require 'emissary'
+
 module.exports =
-  configDefaults:
-    removeTrailingWhitespace: true
-    ensureSingleTrailingNewline: true
+class Whitespace
+  Subscriber.includeInto(this)
 
-  activate: ->
-    @editorSubscription = atom.project.eachEditor (editor) ->
-      bufferSubscription = editor.getBuffer().on 'will-be-saved', (buffer) ->
-        buffer.transact ->
-          if atom.config.get('whitespace.removeTrailingWhitespace')
-            removeTrailingWhitespace(editor)
+  constructor: ->
+    atom.workspace.eachEditor (editor) =>
+      @handleBufferEvents(editor)
 
-          if atom.config.get('whitespace.ensureSingleTrailingNewline')
-            ensureSingleTrailingNewline(editor)
+  destroy: ->
+    @unsubscribe()
 
-      editor.on 'destroyed', -> bufferSubscription.off()
+  handleBufferEvents: (editor) ->
+    buffer = editor.getBuffer()
+    @subscribe buffer, 'will-be-saved', =>
+      buffer.transact =>
+        if atom.config.get('whitespace.removeTrailingWhitespace')
+          @removeTrailingWhitespace(buffer, editor.getGrammar().scopeName)
 
-  deactivate: ->
-    @editorSubscription.off()
+        if atom.config.get('whitespace.ensureSingleTrailingNewline')
+          @ensureSingleTrailingNewline(buffer)
 
-removeTrailingWhitespace = (editor) ->
-  editor.getBuffer().scan /[ \t]+$/g, ({lineText, match, replace}) ->
-    if editor.getGrammar().scopeName is 'source.gfm'
-      # GitHub Flavored Markdown permits two spaces at the end of a line
-      [whitespace] = match
-      replace('') unless whitespace is '  ' and whitespace isnt lineText
+    @subscribe buffer, 'destroyed', =>
+      @unsubscribe(buffer)
+
+  removeTrailingWhitespace: (buffer, grammarScopeName) ->
+    buffer.scan /[ \t]+$/g, ({lineText, match, replace}) ->
+      if grammarScopeName is 'source.gfm'
+        # GitHub Flavored Markdown permits two spaces at the end of a line
+        [whitespace] = match
+        replace('') unless whitespace is '  ' and whitespace isnt lineText
+      else
+        replace('')
+
+  ensureSingleTrailingNewline: (buffer) ->
+    lastRow = buffer.getLastRow()
+    if buffer.lineForRow(lastRow) is ''
+      row = lastRow - 1
+      buffer.deleteRow(row--) while row and buffer.lineForRow(row) is ''
     else
-      replace('')
-
-ensureSingleTrailingNewline = (editor) ->
-  buffer = editor.getBuffer()
-  if buffer.getLastLine() is ''
-    row = buffer.getLastRow() - 1
-    buffer.deleteRow(row--) while row and buffer.lineForRow(row) is ''
-  else
-    selectedBufferRanges = editor.getSelectedBufferRanges()
-    buffer.append('\n')
-    editor.setSelectedBufferRanges(selectedBufferRanges)
+      buffer.append('\n')
