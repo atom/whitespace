@@ -8,7 +8,7 @@
   "engines": {
     "atom": "*"
   },
-  "devDependencies": {
+  "dependencies": {
     "emissary": "1.x",
     "temp": "~0.6.0"
   }
