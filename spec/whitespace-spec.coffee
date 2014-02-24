@@ -1,5 +1,6 @@
 path = require 'path'
-{fs, WorkspaceView} = require 'atom'
+fs = require 'fs-plus'
+{WorkspaceView} = require 'atom'
 temp = require 'temp'
 
 describe "Whitespace", ->
