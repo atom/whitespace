@@ -1,3 +1,3 @@
 # Whitespace package
 
-Remove trailing whitespace automatically when you save.
+Strips trailing whitespace and adds a trailing newline when an editor is saved.
