@@ -29,7 +29,7 @@ class Whitespace
     ignoreCurLine = atom.config.get('whitespace.ignoreWhitespaceOnCurrentLine')
 
     buffer.scan /[ \t]+$/g, ({lineText, match, replace}) ->
-      whitespaceRow = buffer.positionForCharacterIndex(match.index-1).row
+      whitespaceRow = buffer.positionForCharacterIndex(match.index).row
       cursorRow = editor.getCursor().getBufferRow()
 
       return if ignoreCurLine and whitespaceRow is cursorRow
