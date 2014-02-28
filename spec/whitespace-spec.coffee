@@ -52,16 +52,22 @@ describe "Whitespace", ->
     editor.save()
     expect(editor.getText()).toBe "don't trim me \n"
 
-  describe "whitespace.ignoreLeadingWhitespaceOnCurrentLine config", ->
+  describe "whitespace.ignoreWhitespaceOnCurrentLine config", ->
     [originalConfigValue] = []
     beforeEach ->
-      originalConfigValue = atom.config.get("whitespace.ignoreLeadingWhitespaceOnCurrentLine")
+      originalConfigValue = atom.config.get("whitespace.ignoreWhitespaceOnCurrentLine")
       expect(originalConfigValue).toBe true
 
     afterEach ->
-      atom.config.set("whitespace.ignoreLeadingWhitespaceOnCurrentLine", originalConfigValue)
+      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", originalConfigValue)
 
     it "doesn't trim whitespace on current line", ->
+      editor.insertText "  \n-  \n"
+      editor.setCursorBufferPosition([0,6])
+      editor.save()
+      expect(editor.getText()).toBe "\n-  \n"
+
+    it "doesn't trim whitespace on current line when just whitespace", ->
       editor.insertText "  "
       editor.setCursorBufferPosition([0,2])
       editor.save()
@@ -73,8 +79,8 @@ describe "Whitespace", ->
       editor.save()
       expect(editor.getText()).toBe "  \n"
 
-    it "trims whitespace on current line if ignoreLeadingWhitespaceOnCurrentLine is false", ->
-      atom.config.set("whitespace.ignoreLeadingWhitespaceOnCurrentLine", false)
+    it "trims whitespace on current line if ignoreWhitespaceOnCurrentLine is false", ->
+      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
 
       editor.insertText "  "
       editor.setCursorBufferPosition([0,2])
