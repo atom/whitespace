@@ -31,11 +31,14 @@ class Whitespace
     buffer.scan /[ \t]+$/g, ({lineText, match, replace}) ->
       whitespaceRow = buffer.positionForCharacterIndex(match.index-1).row
       cursorRow = editor.getCursor().getBufferRow()
+
+      return if ignoreCurLine and whitespaceRow is cursorRow
+
       if grammarScopeName is 'source.gfm'
         # GitHub Flavored Markdown permits two spaces at the end of a line
         [whitespace] = match
         replace('') unless whitespace is '  ' and whitespace isnt lineText
-      else if not (ignoreCurLine and whitespaceRow is cursorRow)
+      else
         replace('')
 
   ensureSingleTrailingNewline: (buffer) ->
