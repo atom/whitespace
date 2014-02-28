@@ -35,9 +35,7 @@ class Whitespace
         # GitHub Flavored Markdown permits two spaces at the end of a line
         [whitespace] = match
         replace('') unless whitespace is '  ' and whitespace isnt lineText
-      else if ignoreCurLine and onlyWhitespace and whitespaceRow is cursorRow
-        # don't touch this line
-      else
+      else if not (ignoreCurLine and onlyWhitespace and whitespaceRow is cursorRow)
         replace('')
 
   ensureSingleTrailingNewline: (buffer) ->
