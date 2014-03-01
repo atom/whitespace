@@ -20,22 +20,6 @@ describe "Whitespace", ->
     waitsForPromise ->
       atom.packages.activatePackage('whitespace')
 
-  it "strips trailing whitespace before an editor saves a buffer", ->
-    atom.config.set("whitespace.ensureSingleTrailingNewline", false)
-
-    # works for buffers that are already open when package is initialized
-    editor.insertText("foo   \nbar\t   \n\nbaz")
-    editor.save()
-    expect(editor.getText()).toBe "foo\nbar\n\nbaz"
-
-    # works for buffers that are opened after package is initialized
-    editor = atom.project.openSync('sample.txt')
-    editor.moveCursorToEndOfLine()
-    editor.insertText("           ")
-
-    editor.save()
-    expect(editor.getText()).toBe 'Some text.\n'
-
   describe "when the editor is destroyed", ->
     beforeEach ->
       editor.destroy()
@@ -45,12 +29,35 @@ describe "Whitespace", ->
       buffer.save()
       expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
 
-  it "does not trim trailing whitespace if removeTrailingWhitespace is false", ->
-    atom.config.set("whitespace.removeTrailingWhitespace", false)
+  describe "when 'whitespace.removeTrailingWhitespace' is true", ->
+    beforeEach ->
+      atom.config.set("whitespace.removeTrailingWhitespace", true)
 
-    editor.insertText "don't trim me "
-    editor.save()
-    expect(editor.getText()).toBe "don't trim me \n"
+    it "strips trailing whitespace before an editor saves a buffer", ->
+      # works for buffers that are already open when package is initialized
+      editor.insertText("foo   \nbar\t   \n\nbaz\n")
+      editor.save()
+      expect(editor.getText()).toBe "foo\nbar\n\nbaz\n"
+
+      # works for buffers that are opened after package is initialized
+      editor = atom.project.openSync('sample.txt')
+      editor.moveCursorToEndOfLine()
+      editor.insertText("           ")
+
+      # move cursor to next line to avoid ignoreWhitespaceOnCurrentLine
+      editor.moveCursorToBottom()
+
+      editor.save()
+      expect(editor.getText()).toBe 'Some text.\n'
+
+  describe "when 'whitespace.removeTrailingWhitespace' is false", ->
+    beforeEach ->
+      atom.config.set("whitespace.removeTrailingWhitespace", false)
+
+    it "does not trim trailing whitespace", ->
+      editor.insertText "don't trim me "
+      editor.save()
+      expect(editor.getText()).toBe "don't trim me \n"
 
   describe "when 'whitespace.ignoreWhitespaceOnCurrentLine' is true", ->
     beforeEach ->
