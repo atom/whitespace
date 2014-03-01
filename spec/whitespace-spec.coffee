@@ -74,14 +74,9 @@ describe "Whitespace", ->
       editor.save()
       expect(editor.getText()).toBe "1\n2\n3\n"
 
-  describe "whitespace.ensureSingleTrailingNewline config", ->
-    [originalConfigValue] = []
+  describe "when 'whitespace.ensureSingleTrailingNewline' is true", ->
     beforeEach ->
-      originalConfigValue = atom.config.get("whitespace.ensureSingleTrailingNewline")
-      expect(originalConfigValue).toBe true
-
-    afterEach ->
-      atom.config.set("whitespace.ensureSingleTrailingNewline", originalConfigValue)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", true)
 
     it "adds a trailing newline when there is no trailing newline", ->
       editor.insertText "foo"
@@ -108,19 +103,21 @@ describe "Whitespace", ->
       editor.save()
       expect(editor.getText()).toBe "\n"
 
-    it "does not add trailing newline if ensureSingleTrailingNewline is false", ->
-      atom.config.set("whitespace.ensureSingleTrailingNewline", false)
-
-      editor.insertText "no trailing newline"
-      editor.save()
-      expect(editor.getText()).toBe "no trailing newline"
-
     it "does not move the cursor when the new line is added", ->
       editor.insertText "foo\nboo"
       editor.setCursorBufferPosition([0,3])
       editor.save()
       expect(editor.getText()).toBe "foo\nboo\n"
       expect(editor.getCursorBufferPosition()).toEqual([0,3])
+
+  describe "when 'whitespace.ensureSingleTrailingNewline' is false", ->
+    beforeEach ->
+      atom.config.set("whitespace.ensureSingleTrailingNewline", false)
+
+    it "does not add trailing newline if ensureSingleTrailingNewline is false", ->
+      editor.insertText "no trailing newline"
+      editor.save()
+      expect(editor.getText()).toBe "no trailing newline"
 
   describe "GFM whitespace trimming", ->
     beforeEach ->
