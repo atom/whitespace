@@ -121,6 +121,8 @@ describe "Whitespace", ->
 
   describe "GFM whitespace trimming", ->
     beforeEach ->
+      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
+
       waitsForPromise ->
         atom.packages.activatePackage("language-gfm")
 
@@ -150,3 +152,11 @@ describe "Whitespace", ->
       editor.setText "foo\n "
       editor.save()
       expect(editor.getText()).toBe "foo\n"
+
+    it "respects 'whitespace.ignoreWhitespaceOnCurrentLine' setting", ->
+      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true)
+
+      editor.insertText "foo \nline break!"
+      editor.setCursorBufferPosition([0,4])
+      editor.save()
+      expect(editor.getText()).toBe "foo \nline break!\n"
