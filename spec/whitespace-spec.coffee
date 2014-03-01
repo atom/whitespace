@@ -61,11 +61,12 @@ describe "Whitespace", ->
     afterEach ->
       atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", originalConfigValue)
 
-    it "removes the whitespace from all lines, excluding the current line", ->
-      editor.insertText "  \n-  \n"
-      editor.setCursorBufferPosition([1,3])
+    it "removes the whitespace from all lines, excluding the current lines", ->
+      editor.insertText "1  \n2  \n3  \n"
+      editor.addCursorAtBufferPosition([1,3])
+      editor.addCursorAtBufferPosition([2,2])
       editor.save()
-      expect(editor.getText()).toBe "\n-  \n"
+      expect(editor.getText()).toBe "1\n2  \n3  \n"
 
   describe "when 'whitespace.ignoreWhitespaceOnCurrentLine' is false", ->
     [originalConfigValue] = []
@@ -77,11 +78,12 @@ describe "Whitespace", ->
     afterEach ->
       atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", originalConfigValue)
 
-    it "removes the whitespace from all lines, including the current line", ->
-      editor.insertText "  \n-  \n"
-      editor.setCursorBufferPosition([1,3])
+    it "removes the whitespace from all lines, including the current lines", ->
+      editor.insertText "1  \n2  \n3  \n"
+      editor.addCursorAtBufferPosition([1,3])
+      editor.addCursorAtBufferPosition([2,2])
       editor.save()
-      expect(editor.getText()).toBe "\n-\n"
+      expect(editor.getText()).toBe "1\n2\n3\n"
 
   describe "whitespace.ensureSingleTrailingNewline config", ->
     [originalConfigValue] = []
