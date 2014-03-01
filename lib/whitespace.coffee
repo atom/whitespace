@@ -28,7 +28,7 @@ class Whitespace
     buffer = editor.getBuffer()
     ignoreCurrentLine = atom.config.get('whitespace.ignoreWhitespaceOnCurrentLine')
 
-    buffer.scan /[ \t]+$/g, ({lineText, match, replace}) ->
+    buffer.backwardsScan /[ \t]+$/g, ({lineText, match, replace}) ->
       whitespaceRow = buffer.positionForCharacterIndex(match.index).row
       cursorRow = editor.getCursor().getBufferRow()
 
