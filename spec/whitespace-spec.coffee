@@ -53,13 +53,8 @@ describe "Whitespace", ->
     expect(editor.getText()).toBe "don't trim me \n"
 
   describe "when 'whitespace.ignoreWhitespaceOnCurrentLine' is true", ->
-    [originalConfigValue] = []
     beforeEach ->
-      originalConfigValue = atom.config.get("whitespace.ignoreWhitespaceOnCurrentLine")
-      expect(originalConfigValue).toBe true
-
-    afterEach ->
-      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", originalConfigValue)
+      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true)
 
     it "removes the whitespace from all lines, excluding the current lines", ->
       editor.insertText "1  \n2  \n3  \n"
@@ -69,14 +64,8 @@ describe "Whitespace", ->
       expect(editor.getText()).toBe "1\n2  \n3  \n"
 
   describe "when 'whitespace.ignoreWhitespaceOnCurrentLine' is false", ->
-    [originalConfigValue] = []
     beforeEach ->
-      originalConfigValue = atom.config.get("whitespace.ignoreWhitespaceOnCurrentLine")
-      expect(originalConfigValue).toBe true
       atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
-
-    afterEach ->
-      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", originalConfigValue)
 
     it "removes the whitespace from all lines, including the current lines", ->
       editor.insertText "1  \n2  \n3  \n"
