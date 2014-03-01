@@ -30,9 +30,9 @@ class Whitespace
 
     buffer.backwardsScan /[ \t]+$/g, ({lineText, match, replace}) ->
       whitespaceRow = buffer.positionForCharacterIndex(match.index).row
-      cursorRow = editor.getCursor().getBufferRow()
+      cursorRows = (cursor.getBufferRow() for cursor in editor.getCursors())
 
-      return if ignoreCurrentLine and whitespaceRow is cursorRow
+      return if ignoreCurrentLine and whitespaceRow in cursorRows
 
       if grammarScopeName is 'source.gfm'
         # GitHub Flavored Markdown permits two spaces at the end of a line
