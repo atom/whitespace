@@ -64,7 +64,7 @@ describe "Whitespace", ->
     it "removes the whitespace from all lines, excluding the current lines", ->
       editor.insertText "1  \n2  \n3  \n"
       editor.setCursorBufferPosition([1,3])
-      editor.addCursorAtBufferPosition([2,2])
+      editor.addCursorAtBufferPosition([2,3])
       editor.save()
       expect(editor.getText()).toBe "1\n2  \n3  \n"
 
@@ -81,7 +81,7 @@ describe "Whitespace", ->
     it "removes the whitespace from all lines, including the current lines", ->
       editor.insertText "1  \n2  \n3  \n"
       editor.setCursorBufferPosition([1,3])
-      editor.addCursorAtBufferPosition([2,2])
+      editor.addCursorAtBufferPosition([2,3])
       editor.save()
       expect(editor.getText()).toBe "1\n2\n3\n"
 
