@@ -63,7 +63,7 @@ describe "Whitespace", ->
 
     it "removes the whitespace from all lines, excluding the current line", ->
       editor.insertText "  \n-  \n"
-      editor.setCursorBufferPosition([0,6])
+      editor.setCursorBufferPosition([1,3])
       editor.save()
       expect(editor.getText()).toBe "\n-  \n"
 
@@ -79,7 +79,7 @@ describe "Whitespace", ->
 
     it "removes the whitespace from all lines, including the current line", ->
       editor.insertText "  \n-  \n"
-      editor.setCursorBufferPosition([0,6])
+      editor.setCursorBufferPosition([1,3])
       editor.save()
       expect(editor.getText()).toBe "\n-\n"
 
