@@ -3,6 +3,7 @@ Whitespace = require './whitespace'
 module.exports =
   configDefaults:
     removeTrailingWhitespace: true
+    ignoreWhitespaceOnCurrentLine: true
     ensureSingleTrailingNewline: true
 
   activate: ->
