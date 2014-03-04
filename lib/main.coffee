@@ -4,6 +4,7 @@ module.exports =
   configDefaults:
     removeTrailingWhitespace: true
     ignoreWhitespaceOnCurrentLine: true
+    ignoreWhitespaceOnlyLines: false
     ensureSingleTrailingNewline: true
 
   activate: ->
