@@ -123,7 +123,7 @@ describe "Whitespace", ->
       originalCursorPosition = editor.getCursor().getBufferPosition()
       editor.save()
       newCursorPosition = editor.getCursor().getBufferPosition()
-      expect(originalCursorPosition.toEqual(newCursorPosition))
+      expect(originalCursorPosition.isEqual(newCursorPosition))
 
   describe "when 'whitespace.ensureSingleTrailingNewline' is false", ->
     beforeEach ->
