@@ -43,14 +43,12 @@ class Whitespace
 
   ensureSingleTrailingNewline: (editor) ->
     buffer = editor.getBuffer()
-    cursor = editor.getCursor()
     lastRow = buffer.getLastRow()
-    originalCursorPosition = cursor.getBufferPosition()
 
     if buffer.lineForRow(lastRow) is ''
       row = lastRow - 1
       buffer.deleteRow(row--) while row and buffer.lineForRow(row) is ''
     else
+      selectedBufferRanges = editor.getSelectedBufferRanges()
       buffer.append('\n')
-
-    cursor.setBufferPosition(originalCursorPosition)
+      editor.setSelectedBufferRanges(selectedBufferRanges)
