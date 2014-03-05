@@ -81,6 +81,30 @@ describe "Whitespace", ->
       editor.save()
       expect(editor.getText()).toBe "1\n2\n3\n"
 
+  describe "when 'whitespace.ignoreWhitespaceOnlyLines' is false", ->
+    beforeEach ->
+      atom.config.set("whitespace.ignoreWhitespaceOnlyLines", false)
+
+    it "removes the whitespace from all lines, including the whitespace-only lines", ->
+      editor.insertText "1  \n2\t  \n\t \n3\n"
+
+      # move cursor to bottom for preventing effect of whitespace.ignoreWhitespaceOnCurrentLine
+      editor.moveCursorToBottom()
+      editor.save()
+      expect(editor.getText()).toBe "1\n2\n\n3\n"
+
+  describe "when 'whitespace.ignoreWhitespaceOnlyLines' is true", ->
+    beforeEach ->
+      atom.config.set("whitespace.ignoreWhitespaceOnlyLines", true)
+
+    it "removes the wthiespace from all lines, excluding the whitespace-only lines", ->
+      editor.insertText "1  \n2\t  \n\t \n3\n"
+
+      # move cursor to bottom for preventing effect of whitespace.ignoreWhitespaceOnCurrentLine
+      editor.moveCursorToBottom()
+      editor.save()
+      expect(editor.getText()).toBe "1\n2\n\t \n3\n"
+
   describe "when 'whitespace.ensureSingleTrailingNewline' is true", ->
     beforeEach ->
       atom.config.set("whitespace.ensureSingleTrailingNewline", true)
@@ -167,3 +191,10 @@ describe "Whitespace", ->
       editor.setCursorBufferPosition([0,4])
       editor.save()
       expect(editor.getText()).toBe "foo \nline break!\n"
+
+    it "respects 'whitespace.ignoreWhitespaceOnlyLines' setting", ->
+      atom.config.set("whitespace.ignoreWhitespaceOnlyLines", true)
+
+      editor.insertText "\t \nline break!"
+      editor.save()
+      expect(editor.getText()).toBe "\t \nline break!\n"

@@ -27,6 +27,7 @@ class Whitespace
   removeTrailingWhitespace: (editor, grammarScopeName) ->
     buffer = editor.getBuffer()
     ignoreCurrentLine = atom.config.get('whitespace.ignoreWhitespaceOnCurrentLine')
+    ignoreWhitespaceOnlyLines = atom.config.get('whitespace.ignoreWhitespaceOnlyLines')
 
     buffer.backwardsScan /[ \t]+$/g, ({lineText, match, replace}) ->
       whitespaceRow = buffer.positionForCharacterIndex(match.index).row
@@ -34,9 +35,11 @@ class Whitespace
 
       return if ignoreCurrentLine and whitespaceRow in cursorRows
 
+      [whitespace] = match
+      return if ignoreWhitespaceOnlyLines and whitespace is lineText
+
       if grammarScopeName is 'source.gfm'
         # GitHub Flavored Markdown permits two spaces at the end of a line
-        [whitespace] = match
         replace('') unless whitespace is '  ' and whitespace isnt lineText
       else
         replace('')
