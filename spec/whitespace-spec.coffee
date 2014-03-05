@@ -141,6 +141,15 @@ describe "Whitespace", ->
       expect(editor.getText()).toBe "foo\nboo\n"
       expect(editor.getCursorBufferPosition()).toEqual([0,3])
 
+    it "preserves selections when saving on last line", ->
+      editor.insertText "foo"
+      editor.setCursorBufferPosition([0,0])
+      editor.selectToEndOfLine()
+      originalSelectionRange = editor.getSelection().getBufferRange()
+      editor.save()
+      newSelectionRange = editor.getSelection().getBufferRange()
+      expect(originalSelectionRange).toEqual(newSelectionRange)
+
   describe "when 'whitespace.ensureSingleTrailingNewline' is false", ->
     beforeEach ->
       atom.config.set("whitespace.ensureSingleTrailingNewline", false)
