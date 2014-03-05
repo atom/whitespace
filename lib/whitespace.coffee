@@ -19,7 +19,7 @@ class Whitespace
           @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
 
         if atom.config.get('whitespace.ensureSingleTrailingNewline')
-          @ensureSingleTrailingNewline(buffer)
+          @ensureSingleTrailingNewline(editor)
 
     @subscribe buffer, 'destroyed', =>
       @unsubscribe(buffer)
@@ -41,10 +41,16 @@ class Whitespace
       else
         replace('')
 
-  ensureSingleTrailingNewline: (buffer) ->
+  ensureSingleTrailingNewline: (editor) ->
+    buffer = editor.getBuffer()
+    cursor = editor.getCursor()
     lastRow = buffer.getLastRow()
+    originalCursorPosition = cursor.getBufferPosition()
+
     if buffer.lineForRow(lastRow) is ''
       row = lastRow - 1
       buffer.deleteRow(row--) while row and buffer.lineForRow(row) is ''
     else
       buffer.append('\n')
+
+    cursor.setBufferPosition(originalCursorPosition)

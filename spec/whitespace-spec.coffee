@@ -117,6 +117,14 @@ describe "Whitespace", ->
       expect(editor.getText()).toBe "foo\nboo\n"
       expect(editor.getCursorBufferPosition()).toEqual([0,3])
 
+    it "preserves the cursor position when saving on last line", ->
+      editor.insertText "foo"
+      editor.moveCursorToEndOfLine()
+      originalCursorPosition = editor.getCursor().getBufferPosition()
+      editor.save()
+      newCursorPosition = editor.getCursor().getBufferPosition()
+      expect(originalCursorPosition).toEqual(newCursorPosition)
+
   describe "when 'whitespace.ensureSingleTrailingNewline' is false", ->
     beforeEach ->
       atom.config.set("whitespace.ensureSingleTrailingNewline", false)
