@@ -100,7 +100,7 @@ describe "Whitespace", ->
     it "removes the wthiespace from all lines, excluding the whitespace-only lines", ->
       editor.insertText "1  \n2\t  \n\t \n3\n"
 
-      #move cursor to bottom for preventing effect of whitespace.ignoreWhitespaceOnCurrentLine
+      # move cursor to bottom for preventing effect of whitespace.ignoreWhitespaceOnCurrentLine
       editor.moveCursorToBottom()
       editor.save()
       expect(editor.getText()).toBe "1\n2\n\t \n3\n"
