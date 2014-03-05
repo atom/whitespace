@@ -35,7 +35,7 @@ describe "Whitespace", ->
 
     it "strips trailing whitespace before an editor saves a buffer", ->
       # works for buffers that are already open when package is initialized
-      editor.insertText("foo   \nbar\t   \n\t \nbaz\n")
+      editor.insertText("foo   \nbar\t   \n\nbaz\n")
       editor.save()
       expect(editor.getText()).toBe "foo\nbar\n\nbaz\n"
 
