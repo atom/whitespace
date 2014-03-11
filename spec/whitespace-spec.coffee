@@ -20,6 +20,19 @@ describe "Whitespace", ->
     waitsForPromise ->
       atom.packages.activatePackage('whitespace')
 
+  describe "when we destroy an editor with the same buffer", ->
+    beforeEach ->
+      atom.config.set("whitespace.ensureSingleTrailingNewline", true)
+
+    it "should unsubscribe from the buffer", ->
+      pane = atom.workspace.getActivePane()
+      newEditor = editor.copy()
+      newBuffer = newEditor.getBuffer()
+      pane.splitRight({items: [newEditor]})
+      editor.destroy()
+      newBuffer.setText("not empty")
+      expect(-> newBuffer.save()).not.toThrow()
+
   describe "when the editor is destroyed", ->
     beforeEach ->
       editor.destroy()

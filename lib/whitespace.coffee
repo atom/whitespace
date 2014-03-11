@@ -21,6 +21,9 @@ class Whitespace
         if atom.config.get('whitespace.ensureSingleTrailingNewline')
           @ensureSingleTrailingNewline(editor)
 
+    @subscribe editor, 'destroyed', =>
+      @unsubscribe(buffer)
+
     @subscribe buffer, 'destroyed', =>
       @unsubscribe(buffer)
 
