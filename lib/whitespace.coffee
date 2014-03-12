@@ -5,7 +5,7 @@ class Whitespace
   Subscriber.includeInto(this)
 
   constructor: ->
-    atom.workspace.eachEditor (editor) =>
+    @subscribe atom.workspace.eachEditor (editor) =>
       @handleEvents(editor)
 
   destroy: ->

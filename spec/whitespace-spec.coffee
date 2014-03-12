@@ -217,3 +217,21 @@ describe "Whitespace", ->
       editor.setText('test')
       expect(-> editor.save()).not.toThrow()
       expect(editor.getText()).toBe 'test\n'
+
+  describe "when deactivated", ->
+    it "does not remove trailing whitespace from editors opened after deactivation", ->
+      atom.config.set("whitespace.removeTrailingWhitespace", true)
+      atom.packages.deactivatePackage('whitespace')
+
+      editor.setText("foo \n")
+      editor.save()
+      expect(editor.getText()).toBe "foo \n"
+
+      waitsForPromise ->
+        atom.workspace.open('sample2.txt')
+
+      runs ->
+        editor = atom.workspace.getActiveEditor()
+        editor.setText("foo \n")
+        editor.save()
+        expect(editor.getText()).toBe "foo \n"
