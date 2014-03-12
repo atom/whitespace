@@ -24,6 +24,9 @@ class Whitespace
     @subscribe editor, 'destroyed', ->
       bufferSavedSubscription.off()
 
+    @subscribe buffer, 'destroyed', =>
+      @unsubscribe(buffer)
+
   removeTrailingWhitespace: (editor, grammarScopeName) ->
     buffer = editor.getBuffer()
     ignoreCurrentLine = atom.config.get('whitespace.ignoreWhitespaceOnCurrentLine')
