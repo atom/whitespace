@@ -207,3 +207,13 @@ describe "Whitespace", ->
       editor.insertText "\t \nline break!"
       editor.save()
       expect(editor.getText()).toBe "\t \nline break!\n"
+
+  describe "when the editor is split", ->
+    it "does not throw exceptions when the editor is saved after the split is closed (regression)", ->
+      atom.workspaceView.getActivePaneView().trigger 'pane:split-right'
+      atom.workspace.getPanes()[0].destroyItems()
+
+      editor = atom.workspace.activePaneItem
+      editor.setText('test')
+      expect(-> editor.save()).not.toThrow()
+      expect(editor.getText()).toBe 'test\n'

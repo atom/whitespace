@@ -6,14 +6,14 @@ class Whitespace
 
   constructor: ->
     atom.workspace.eachEditor (editor) =>
-      @handleBufferEvents(editor)
+      @handleEvents(editor)
 
   destroy: ->
     @unsubscribe()
 
-  handleBufferEvents: (editor) ->
+  handleEvents: (editor) ->
     buffer = editor.getBuffer()
-    @subscribe buffer, 'will-be-saved', =>
+    bufferSavedSubscription = @subscribe buffer, 'will-be-saved', =>
       buffer.transact =>
         if atom.config.get('whitespace.removeTrailingWhitespace')
           @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
@@ -21,8 +21,8 @@ class Whitespace
         if atom.config.get('whitespace.ensureSingleTrailingNewline')
           @ensureSingleTrailingNewline(editor)
 
-    @subscribe buffer, 'destroyed', =>
-      @unsubscribe(buffer)
+    @subscribe editor, 'destroyed', ->
+      bufferSavedSubscription.off()
 
   removeTrailingWhitespace: (editor, grammarScopeName) ->
     buffer = editor.getBuffer()
