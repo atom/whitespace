@@ -1,0 +1,11 @@
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'Whitespace'
+      'submenu': [
+        { 'label': 'Remove Trailing Whitespace', 'command': 'whitespace:remove-trailing-whitespace' }
+      ]
+    ]
+  }
+]
