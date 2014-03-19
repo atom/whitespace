@@ -9,6 +9,11 @@ module.exports =
 
   activate: ->
     @whitespace = new Whitespace()
+    atom.workspaceView.command 'whitespace:remove-trailing-whitespace', =>
+      if @whitespace? and editor = atom.workspace.getActiveEditor()
+        @whitespace.removeTrailingWhitespace editor, editor.getGrammar().scopeName
+
 
   deactivate: ->
-    @whitespace.destroy()
+    @whitespace?.destroy()
+    @whitespace = null

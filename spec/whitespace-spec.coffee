@@ -235,3 +235,24 @@ describe "Whitespace", ->
         editor.setText("foo \n")
         editor.save()
         expect(editor.getText()).toBe "foo \n"
+
+  describe "when the 'whitespace:remove-trailing-whitespace' command is run", ->
+    whitespace = null
+
+    beforeEach ->
+      whitespace = atom.packages.getActivePackage('whitespace').mainModule.whitespace
+      spyOn whitespace, 'removeTrailingWhitespace'
+
+    it "runs 'whitespace.removeTrailingWhitespace'", ->
+      atom.workspaceView.trigger 'whitespace:remove-trailing-whitespace'
+      expect(whitespace.removeTrailingWhitespace).toHaveBeenCalled()
+
+    it "does not attempt to remove whitespace when there is no buffer", ->
+      editor.destroy()
+      atom.workspaceView.trigger 'whitespace:remove-trailing-whitespace'
+      expect(whitespace.removeTrailingWhitespace).not.toHaveBeenCalled()
+
+    it "does not attempt to remove whitespace when the plugin is disabled", ->
+      atom.packages.deactivatePackage 'whitespace'
+      atom.workspaceView.trigger 'whitespace:remove-trailing-whitespace'
+      expect(whitespace.removeTrailingWhitespace).not.toHaveBeenCalled()
