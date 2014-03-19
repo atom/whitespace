@@ -8,6 +8,10 @@ class Whitespace
     @subscribe atom.workspace.eachEditor (editor) =>
       @handleEvents(editor)
 
+    @subscribe atom.workspaceView.command 'whitespace:remove-trailing-whitespace', =>
+      if editor = atom.workspace.getActiveEditor()
+        @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
+
   destroy: ->
     @unsubscribe()
 
