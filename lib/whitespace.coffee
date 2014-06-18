@@ -1,3 +1,4 @@
+path = require 'path'
 {Subscriber} = require 'emissary'
 
 module.exports =
@@ -19,7 +20,7 @@ class Whitespace
     buffer = editor.getBuffer()
     bufferSavedSubscription = @subscribe buffer, 'will-be-saved', =>
       buffer.transact =>
-        if atom.config.get('whitespace.removeTrailingWhitespace')
+        if atom.config.get('whitespace.removeTrailingWhitespace') && path.extname(editor.getPath()) not in atom.config.get('whitespace.ignoreFiles').split ", "
           @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
 
         if atom.config.get('whitespace.ensureSingleTrailingNewline')
