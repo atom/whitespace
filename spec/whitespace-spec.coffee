@@ -14,8 +14,12 @@ describe "Whitespace", ->
     filePath = path.join(directory, 'atom-whitespace.txt')
     fs.writeFileSync(filePath, '')
     fs.writeFileSync(path.join(directory, 'sample.txt'), 'Some text.\n')
-    editor = atom.workspace.openSync(filePath)
-    buffer = editor.getBuffer()
+
+    waitsForPromise ->
+      atom.workspace.open(filePath).then (o) -> editor = o
+
+    runs ->
+      buffer = editor.getBuffer()
 
     waitsForPromise ->
       atom.packages.activatePackage('whitespace')
@@ -39,16 +43,19 @@ describe "Whitespace", ->
       editor.save()
       expect(editor.getText()).toBe "foo\nbar\n\nbaz\n"
 
-      # works for buffers that are opened after package is initialized
-      editor = atom.project.openSync('sample.txt')
-      editor.moveCursorToEndOfLine()
-      editor.insertText("           ")
+      waitsForPromise ->
+        # works for buffers that are opened after package is initialized
+        editor = atom.workspace.open('sample.txt').then (o) -> editor = o
 
-      # move cursor to next line to avoid ignoreWhitespaceOnCurrentLine
-      editor.moveCursorToBottom()
+      runs ->
+        editor.moveCursorToEndOfLine()
+        editor.insertText("           ")
 
-      editor.save()
-      expect(editor.getText()).toBe 'Some text.\n'
+        # move cursor to next line to avoid ignoreWhitespaceOnCurrentLine
+        editor.moveCursorToBottom()
+
+        editor.save()
+        expect(editor.getText()).toBe 'Some text.\n'
 
   describe "when 'whitespace.removeTrailingWhitespace' is false", ->
     beforeEach ->
