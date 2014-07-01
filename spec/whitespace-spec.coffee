@@ -247,3 +247,15 @@ describe "Whitespace", ->
     it "does not attempt to remove whitespace when the package is deactivated", ->
       atom.packages.deactivatePackage 'whitespace'
       expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
+
+  describe "when the 'whitespace:convert-tabs-to-spaces' command is run", ->
+    it "removes all \t characters and replaces them with spaces using the configured tab length", ->
+      editor.setTabLength(2)
+      buffer.setText('\ta\n\t\nb\t\nc\t\td')
+      atom.workspaceView.trigger 'whitespace:convert-tabs-to-spaces'
+      expect(buffer.getText()).toBe "  a\n  \nb  \nc    d"
+
+      editor.setTabLength(3)
+      buffer.setText('\ta\n\t\nb\t\nc\t\td')
+      atom.workspaceView.trigger 'whitespace:convert-tabs-to-spaces'
+      expect(buffer.getText()).toBe "   a\n   \nb   \nc      d"

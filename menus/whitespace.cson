@@ -5,6 +5,7 @@
       'label': 'Whitespace'
       'submenu': [
         { 'label': 'Remove Trailing Whitespace', 'command': 'whitespace:remove-trailing-whitespace' }
+        { 'label': 'Convert Tabs To Spaces', 'command': 'whitespace:convert-tabs-to-spaces' }
       ]
     ]
   }

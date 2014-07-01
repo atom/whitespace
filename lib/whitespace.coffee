@@ -12,6 +12,10 @@ class Whitespace
       if editor = atom.workspace.getActiveEditor()
         @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
 
+    @subscribe atom.workspaceView.command 'whitespace:convert-tabs-to-spaces', =>
+      if editor = atom.workspace.getActiveEditor()
+        @convertTabsToSpaces(editor)
+
   destroy: ->
     @unsubscribe()
 
@@ -63,3 +67,10 @@ class Whitespace
       selectedBufferRanges = editor.getSelectedBufferRanges()
       buffer.append('\n')
       editor.setSelectedBufferRanges(selectedBufferRanges)
+
+  convertTabsToSpaces: (editor) ->
+    buffer = editor.getBuffer()
+    spacesText = new Array(editor.getTabLength() + 1).join(' ')
+
+    buffer.transact ->
+      buffer.scan /\t/g, ({replace}) -> replace(spacesText)
