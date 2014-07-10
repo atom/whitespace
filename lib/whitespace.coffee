@@ -22,6 +22,9 @@ class Whitespace
   handleEvents: (editor) ->
     buffer = editor.getBuffer()
     bufferSavedSubscription = @subscribe buffer, 'will-be-saved', =>
+      for path in atom.config.get('whitespace.disableForPaths')
+        return if editor.getPath() && editor.getPath().indexOf(path) == 0
+
       buffer.transact =>
         if atom.config.get('whitespace.removeTrailingWhitespace')
           @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)

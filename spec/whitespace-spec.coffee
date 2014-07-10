@@ -4,7 +4,7 @@ fs = require 'fs-plus'
 temp = require 'temp'
 
 describe "Whitespace", ->
-  [editor, buffer] = []
+  [editor, buffer, filePath] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
@@ -266,3 +266,22 @@ describe "Whitespace", ->
       buffer.setText('\ta\n\t\nb\t\nc\t\td')
       atom.workspaceView.trigger 'whitespace:convert-tabs-to-spaces'
       expect(buffer.getText()).toBe "   a\n   \nb   \nc      d"
+
+  describe "whitespace:disableForPaths", ->
+    it 'does not crash for new files', ->
+      spyOn(editor, 'getPath').andReturn(null)
+      editor.saveAs(filePath)
+
+    describe "for files under one of those paths", ->
+      it "does not remove any trailing whitespace", ->
+        atom.config.set("whitespace.disableForPaths", [editor.getPath().replace('atom-whitespace.txt', '')])
+        editor.insertText("foo   \nbar\t   \n\nbaz\n")
+        editor.save()
+        expect(editor.getText()).toBe "foo   \nbar\t   \n\nbaz\n"
+
+    describe "for files NOT under one of those paths", ->
+      it "removes trailing whitespaces", ->
+        atom.config.set("whitespace.disableForPaths", [temp.mkdirSync()])
+        editor.insertText("foo   \nbar\t   \n\nbaz\n")
+        editor.save()
+        expect(editor.getText()).toBe "foo\nbar\n\nbaz\n"
