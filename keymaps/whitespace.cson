@@ -1,0 +1,5 @@
+# For more detailed documentation see
+# https://atom.io/docs/latest/advanced/keymaps
+'.editor':
+  'ctrl-shift-[': 'whitespace:convert-spaces-to-tabs'
+  'ctrl-shift-]': 'whitespace:convert-tabs-to-spaces'
