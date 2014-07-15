@@ -266,3 +266,15 @@ describe "Whitespace", ->
       buffer.setText('\ta\n\t\nb\t\nc\t\td')
       atom.workspaceView.trigger 'whitespace:convert-tabs-to-spaces'
       expect(buffer.getText()).toBe "   a\n   \nb   \nc      d"
+
+  describe "when the 'whitespace:convert-spaces-to-tabs' command is run", ->
+    it "removes all space characters and replaces them with \t using the configured tab length", ->
+      editor.setTabLength(2)
+      buffer.setText("  a\n  \nb  \nc    d")
+      atom.workspaceView.trigger 'whitespace:convert-spaces-to-tabs'
+      expect(buffer.getText()).toBe '\ta\n\t\nb\t\nc\t\td'
+
+      editor.setTabLength(3)
+      buffer.setText("   a\n   \nb   \nc      d"
+      atom.workspaceView.trigger 'whitespace:convert-spaces-to-tabs'
+      expect(buffer.getText()).toBe '\ta\n\t\nb\t\nc\t\td')
