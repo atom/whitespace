@@ -15,7 +15,6 @@ class Whitespace
     @subscribeToCommand atom.workspaceView, 'whitespace:convert-tabs-to-spaces', =>
       if editor = atom.workspace.getActiveEditor()
         @convertTabsToSpaces(editor)
-        @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
 
     @subscribeToCommand atom.workspaceView, 'whitespace:convert-spaces-to-tabs', =>
       if editor = atom.workspace.getActiveEditor()
