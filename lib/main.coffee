@@ -6,6 +6,7 @@ module.exports =
     ignoreWhitespaceOnCurrentLine: true
     ignoreWhitespaceOnlyLines: false
     ensureSingleTrailingNewline: true
+    ignoreFiles: '.md, .jade'
 
   activate: ->
     @whitespace = new Whitespace()
