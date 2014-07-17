@@ -16,6 +16,10 @@ class Whitespace
       if editor = atom.workspace.getActiveEditor()
         @convertTabsToSpaces(editor)
 
+    @subscribeToCommand atom.workspaceView, 'whitespace:convert-spaces-to-tabs', =>
+      if editor = atom.workspace.getActiveEditor()
+        @convertSpacesToTabs(editor)
+
   destroy: ->
     @unsubscribe()
 
@@ -74,3 +78,10 @@ class Whitespace
 
     buffer.transact ->
       buffer.scan /\t/g, ({replace}) -> replace(spacesText)
+
+  convertSpacesToTabs: (editor) ->
+    buffer = editor.getBuffer()
+    spacesText = new Array(editor.getTabLength() + 1).join(' ')
+
+    buffer.transact ->
+      buffer.scan new RegExp(spacesText, 'g'), ({replace}) -> replace('\t')
