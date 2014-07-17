@@ -268,7 +268,7 @@ describe "Whitespace", ->
       expect(buffer.getText()).toBe "   a\n   \nb   \nc      d"
 
   describe "when the 'whitespace:convert-spaces-to-tabs' command is run", ->
-    it "removes all space characters and replaces them with \t using the configured tab length", ->
+    it "removes all space characters and replaces them with hard tabs", ->
       editor.setTabLength(2)
       buffer.setText("  a\n  \nb  \nc    d")
       atom.workspaceView.trigger 'whitespace:convert-spaces-to-tabs'
