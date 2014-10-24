@@ -62,9 +62,19 @@ describe "Whitespace", ->
       atom.config.set("whitespace.removeTrailingWhitespace", false)
 
     it "does not trim trailing whitespace", ->
-      editor.insertText "don't trim me "
+      editor.insertText "don't trim me \n\n"
       editor.save()
       expect(editor.getText()).toBe "don't trim me \n"
+
+    describe "when the setting is set scoped to the grammar", ->
+      beforeEach ->
+        atom.config.set("whitespace.removeTrailingWhitespace", true)
+        atom.config.set('.text.plain', "whitespace.removeTrailingWhitespace", false)
+
+      it "does not trim trailing whitespace", ->
+        editor.insertText "don't trim me \n\n"
+        editor.save()
+        expect(editor.getText()).toBe "don't trim me \n"
 
   describe "when 'whitespace.ignoreWhitespaceOnCurrentLine' is true", ->
     beforeEach ->
