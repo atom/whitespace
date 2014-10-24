@@ -1,11 +1,22 @@
 Whitespace = require './whitespace'
 
 module.exports =
-  configDefaults:
-    removeTrailingWhitespace: true
-    ignoreWhitespaceOnCurrentLine: true
-    ignoreWhitespaceOnlyLines: false
-    ensureSingleTrailingNewline: true
+  config:
+    removeTrailingWhitespace:
+      type: 'boolean'
+      default: true
+      scopes:
+        '.source.jade':
+          default: false
+    ignoreWhitespaceOnCurrentLine:
+      type: 'boolean'
+      default: true
+    ignoreWhitespaceOnlyLines:
+      type: 'boolean'
+      default: false
+    ensureSingleTrailingNewline:
+      type: 'boolean'
+      default: true
 
   activate: ->
     @whitespace = new Whitespace()
