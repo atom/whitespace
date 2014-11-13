@@ -8,6 +8,8 @@ module.exports =
       scopes:
         '.source.jade':
           default: false
+        '.source.gfm':
+          default: false
     ignoreWhitespaceOnCurrentLine:
       type: 'boolean'
       default: true
