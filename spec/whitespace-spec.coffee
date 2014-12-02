@@ -7,7 +7,7 @@ describe "Whitespace", ->
 
   beforeEach ->
     directory = temp.mkdirSync()
-    atom.project.setPath(directory)
+    atom.project.setPaths([directory])
     workspaceElement = atom.views.getView(atom.workspace)
     filePath = path.join(directory, 'atom-whitespace.txt')
     fs.writeFileSync(filePath, '')
