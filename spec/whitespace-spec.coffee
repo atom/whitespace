@@ -182,7 +182,7 @@ describe "Whitespace", ->
         atom.packages.activatePackage("language-gfm")
 
       runs ->
-        editor.setGrammar(atom.syntax.grammarForScopeName("source.gfm"))
+        editor.setGrammar(atom.grammars.grammarForScopeName("source.gfm"))
 
     it "trims GFM text with a single space", ->
       editor.insertText "foo \nline break!"
