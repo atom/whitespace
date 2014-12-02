@@ -1,16 +1,14 @@
 path = require 'path'
 fs = require 'fs-plus'
-{WorkspaceView} = require 'atom'
 temp = require 'temp'
 
 describe "Whitespace", ->
-  [editor, buffer] = []
+  [editor, buffer, workspaceElement] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
-    atom.project.setPath(directory)
-    atom.workspaceView = new WorkspaceView()
-    atom.workspace = atom.workspaceView.model
+    atom.project.setPaths([directory])
+    workspaceElement = atom.views.getView(atom.workspace)
     filePath = path.join(directory, 'atom-whitespace.txt')
     fs.writeFileSync(filePath, '')
     fs.writeFileSync(path.join(directory, 'sample.txt'), 'Some text.\n')
@@ -48,11 +46,11 @@ describe "Whitespace", ->
         editor = atom.workspace.open('sample.txt').then (o) -> editor = o
 
       runs ->
-        editor.moveCursorToEndOfLine()
+        editor.moveToEndOfLine()
         editor.insertText("           ")
 
         # move cursor to next line to avoid ignoreWhitespaceOnCurrentLine
-        editor.moveCursorToBottom()
+        editor.moveToBottom()
 
         editor.save()
         expect(editor.getText()).toBe 'Some text.\n'
@@ -106,7 +104,7 @@ describe "Whitespace", ->
       editor.insertText "1  \n2\t  \n\t \n3\n"
 
       # move cursor to bottom for preventing effect of whitespace.ignoreWhitespaceOnCurrentLine
-      editor.moveCursorToBottom()
+      editor.moveToBottom()
       editor.save()
       expect(editor.getText()).toBe "1\n2\n\n3\n"
 
@@ -118,7 +116,7 @@ describe "Whitespace", ->
       editor.insertText "1  \n2\t  \n\t \n3\n"
 
       # move cursor to bottom for preventing effect of whitespace.ignoreWhitespaceOnCurrentLine
-      editor.moveCursorToBottom()
+      editor.moveToBottom()
       editor.save()
       expect(editor.getText()).toBe "1\n2\n\t \n3\n"
 
@@ -162,9 +160,9 @@ describe "Whitespace", ->
       editor.insertText "foo"
       editor.setCursorBufferPosition([0,0])
       editor.selectToEndOfLine()
-      originalSelectionRange = editor.getSelection().getBufferRange()
+      originalSelectionRange = editor.getLastSelection().getBufferRange()
       editor.save()
-      newSelectionRange = editor.getSelection().getBufferRange()
+      newSelectionRange = editor.getLastSelection().getBufferRange()
       expect(originalSelectionRange).toEqual(newSelectionRange)
 
   describe "when 'whitespace.ensureSingleTrailingNewline' is false", ->
@@ -184,7 +182,7 @@ describe "Whitespace", ->
         atom.packages.activatePackage("language-gfm")
 
       runs ->
-        editor.setGrammar(atom.syntax.grammarForScopeName("source.gfm"))
+        editor.setGrammar(atom.grammars.grammarForScopeName("source.gfm"))
 
     it "trims GFM text with a single space", ->
       editor.insertText "foo \nline break!"
@@ -227,10 +225,10 @@ describe "Whitespace", ->
 
   describe "when the editor is split", ->
     it "does not throw exceptions when the editor is saved after the split is closed (regression)", ->
-      atom.workspaceView.getActivePaneView().trigger 'pane:split-right'
+      atom.workspace.getActivePane().splitRight(copyActiveItem: true)
       atom.workspace.getPanes()[0].destroyItems()
 
-      editor = atom.workspace.activePaneItem
+      editor = atom.workspace.getActivePaneItem()
       editor.setText('test')
       expect(-> editor.save()).not.toThrow()
       expect(editor.getText()).toBe 'test\n'
@@ -248,7 +246,7 @@ describe "Whitespace", ->
         atom.workspace.open('sample2.txt')
 
       runs ->
-        editor = atom.workspace.getActiveEditor()
+        editor = atom.workspace.getActiveTextEditor()
         editor.setText("foo \n")
         editor.save()
         expect(editor.getText()).toBe "foo \n"
@@ -258,7 +256,7 @@ describe "Whitespace", ->
       buffer.setText("foo   \nbar\t   \n\nbaz")
 
     it "removes the trailing whitespace in the active editor", ->
-      atom.workspaceView.trigger 'whitespace:remove-trailing-whitespace'
+      atom.commands.dispatch(workspaceElement, 'whitespace:remove-trailing-whitespace')
       expect(buffer.getText()).toBe "foo\nbar\n\nbaz"
 
     it "does not attempt to remove whitespace when the package is deactivated", ->
@@ -269,22 +267,22 @@ describe "Whitespace", ->
     it "removes all \t characters and replaces them with spaces using the configured tab length", ->
       editor.setTabLength(2)
       buffer.setText('\ta\n\t\nb\t\nc\t\td')
-      atom.workspaceView.trigger 'whitespace:convert-tabs-to-spaces'
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
       expect(buffer.getText()).toBe "  a\n  \nb  \nc    d"
 
       editor.setTabLength(3)
       buffer.setText('\ta\n\t\nb\t\nc\t\td')
-      atom.workspaceView.trigger 'whitespace:convert-tabs-to-spaces'
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
       expect(buffer.getText()).toBe "   a\n   \nb   \nc      d"
 
   describe "when the 'whitespace:convert-spaces-to-tabs' command is run", ->
     it "removes all space characters and replaces them with hard tabs", ->
       editor.setTabLength(2)
       buffer.setText("  a\n  \nb  \nc    d")
-      atom.workspaceView.trigger 'whitespace:convert-spaces-to-tabs'
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
       expect(buffer.getText()).toBe '\ta\n\t\nb\t\nc\t\td'
 
       editor.setTabLength(3)
       buffer.setText("   a\n   \nb   \nc      d"
-      atom.workspaceView.trigger 'whitespace:convert-spaces-to-tabs'
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
       expect(buffer.getText()).toBe '\ta\n\t\nb\t\nc\t\td')
