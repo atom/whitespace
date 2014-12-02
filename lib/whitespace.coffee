@@ -1,45 +1,46 @@
-{Subscriber} = require 'emissary'
+{CompositeDisposable} = require 'atom'
 
 module.exports =
 class Whitespace
-  Subscriber.includeInto(this)
-
   constructor: ->
-    @subscribe atom.workspace.eachEditor (editor) =>
+    @subscriptions = new CompositeDisposable
+    @subscriptions.add atom.workspace.eachEditor (editor) =>
       @handleEvents(editor)
 
-    @subscribeToCommand atom.workspaceView, 'whitespace:remove-trailing-whitespace', =>
-      if editor = atom.workspace.getActiveEditor()
-        @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
-
-    @subscribeToCommand atom.workspaceView, 'whitespace:convert-tabs-to-spaces', =>
-      if editor = atom.workspace.getActiveEditor()
-        @convertTabsToSpaces(editor)
-
-    @subscribeToCommand atom.workspaceView, 'whitespace:convert-spaces-to-tabs', =>
-      if editor = atom.workspace.getActiveEditor()
-        @convertSpacesToTabs(editor)
+    @subscriptions.add atom.commands.add 'atom-workspace',
+      'whitespace:remove-trailing-whitespace': =>
+        if editor = atom.workspace.getActiveEditor()
+          @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
+      'whitespace:convert-tabs-to-spaces': =>
+        if editor = atom.workspace.getActiveEditor()
+          @convertTabsToSpaces(editor)
+      'whitespace:convert-spaces-to-tabs': =>
+        if editor = atom.workspace.getActiveEditor()
+          @convertSpacesToTabs(editor)
 
   destroy: ->
-    @unsubscribe()
+    @subscriptions.dispose()
 
   handleEvents: (editor) ->
     buffer = editor.getBuffer()
-    bufferSavedSubscription = @subscribe buffer, 'will-be-saved', =>
+    bufferSavedSubscription = buffer.onWillSave =>
       buffer.transact =>
         scopeDescriptor = editor.getRootScopeDescriptor()
         if atom.config.get(scopeDescriptor, 'whitespace.removeTrailingWhitespace')
           @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
-
         if atom.config.get(scopeDescriptor, 'whitespace.ensureSingleTrailingNewline')
           @ensureSingleTrailingNewline(editor)
 
-    @subscribe editor, 'destroyed', =>
-      bufferSavedSubscription.off()
-      @unsubscribe(editor)
+    editorDestroyedSubscription = editor.onDidDestroy ->
+      bufferSavedSubscription.dispose()
+      editorDestroyedSubscription.dispose()
+    bufferDestroyedSubscription = buffer.onDidDestroy ->
+      bufferDestroyedSubscription.dispose()
+      bufferSavedSubscription.dispose()
 
-    @subscribe buffer, 'destroyed', =>
-      @unsubscribe(buffer)
+    @subscriptions.add(bufferSavedSubscription)
+    @subscriptions.add(editorDestroyedSubscription)
+    @subscriptions.add(bufferDestroyedSubscription)
 
   removeTrailingWhitespace: (editor, grammarScopeName) ->
     buffer = editor.getBuffer()
