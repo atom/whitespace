@@ -46,11 +46,11 @@ describe "Whitespace", ->
         editor = atom.workspace.open('sample.txt').then (o) -> editor = o
 
       runs ->
-        editor.moveCursorToEndOfLine()
+        editor.moveToEndOfLine()
         editor.insertText("           ")
 
         # move cursor to next line to avoid ignoreWhitespaceOnCurrentLine
-        editor.moveCursorToBottom()
+        editor.moveToBottom()
 
         editor.save()
         expect(editor.getText()).toBe 'Some text.\n'
@@ -104,7 +104,7 @@ describe "Whitespace", ->
       editor.insertText "1  \n2\t  \n\t \n3\n"
 
       # move cursor to bottom for preventing effect of whitespace.ignoreWhitespaceOnCurrentLine
-      editor.moveCursorToBottom()
+      editor.moveToBottom()
       editor.save()
       expect(editor.getText()).toBe "1\n2\n\n3\n"
 
@@ -116,7 +116,7 @@ describe "Whitespace", ->
       editor.insertText "1  \n2\t  \n\t \n3\n"
 
       # move cursor to bottom for preventing effect of whitespace.ignoreWhitespaceOnCurrentLine
-      editor.moveCursorToBottom()
+      editor.moveToBottom()
       editor.save()
       expect(editor.getText()).toBe "1\n2\n\t \n3\n"
 
@@ -160,9 +160,9 @@ describe "Whitespace", ->
       editor.insertText "foo"
       editor.setCursorBufferPosition([0,0])
       editor.selectToEndOfLine()
-      originalSelectionRange = editor.getSelection().getBufferRange()
+      originalSelectionRange = editor.getLastSelection().getBufferRange()
       editor.save()
-      newSelectionRange = editor.getSelection().getBufferRange()
+      newSelectionRange = editor.getLastSelection().getBufferRange()
       expect(originalSelectionRange).toEqual(newSelectionRange)
 
   describe "when 'whitespace.ensureSingleTrailingNewline' is false", ->
