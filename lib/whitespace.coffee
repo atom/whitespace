@@ -4,7 +4,7 @@ module.exports =
 class Whitespace
   constructor: ->
     @subscriptions = new CompositeDisposable
-    @subscriptions.add atom.workspace.eachEditor (editor) =>
+    @subscriptions.add atom.workspace.observeTextEditors (editor) =>
       @handleEvents(editor)
 
     @subscriptions.add atom.commands.add 'atom-workspace',
