@@ -1,16 +1,14 @@
 path = require 'path'
 fs = require 'fs-plus'
-{WorkspaceView} = require 'atom'
 temp = require 'temp'
 
 describe "Whitespace", ->
-  [editor, buffer] = []
+  [editor, buffer, workspaceElement] = []
 
   beforeEach ->
     directory = temp.mkdirSync()
     atom.project.setPath(directory)
-    atom.workspaceView = new WorkspaceView()
-    atom.workspace = atom.workspaceView.model
+    workspaceElement = atom.views.getView(atom.workspace)
     filePath = path.join(directory, 'atom-whitespace.txt')
     fs.writeFileSync(filePath, '')
     fs.writeFileSync(path.join(directory, 'sample.txt'), 'Some text.\n')
@@ -227,7 +225,7 @@ describe "Whitespace", ->
 
   describe "when the editor is split", ->
     it "does not throw exceptions when the editor is saved after the split is closed (regression)", ->
-      atom.workspaceView.getActivePaneView().trigger 'pane:split-right'
+      atom.workspace.getActivePane().splitRight(copyActiveItem: true)
       atom.workspace.getPanes()[0].destroyItems()
 
       editor = atom.workspace.activePaneItem
@@ -258,7 +256,7 @@ describe "Whitespace", ->
       buffer.setText("foo   \nbar\t   \n\nbaz")
 
     it "removes the trailing whitespace in the active editor", ->
-      atom.workspaceView.trigger 'whitespace:remove-trailing-whitespace'
+      atom.commands.dispatch(workspaceElement, 'whitespace:remove-trailing-whitespace')
       expect(buffer.getText()).toBe "foo\nbar\n\nbaz"
 
     it "does not attempt to remove whitespace when the package is deactivated", ->
@@ -269,22 +267,22 @@ describe "Whitespace", ->
     it "removes all \t characters and replaces them with spaces using the configured tab length", ->
       editor.setTabLength(2)
       buffer.setText('\ta\n\t\nb\t\nc\t\td')
-      atom.workspaceView.trigger 'whitespace:convert-tabs-to-spaces'
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
       expect(buffer.getText()).toBe "  a\n  \nb  \nc    d"
 
       editor.setTabLength(3)
       buffer.setText('\ta\n\t\nb\t\nc\t\td')
-      atom.workspaceView.trigger 'whitespace:convert-tabs-to-spaces'
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
       expect(buffer.getText()).toBe "   a\n   \nb   \nc      d"
 
   describe "when the 'whitespace:convert-spaces-to-tabs' command is run", ->
     it "removes all space characters and replaces them with hard tabs", ->
       editor.setTabLength(2)
       buffer.setText("  a\n  \nb  \nc    d")
-      atom.workspaceView.trigger 'whitespace:convert-spaces-to-tabs'
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
       expect(buffer.getText()).toBe '\ta\n\t\nb\t\nc\t\td'
 
       editor.setTabLength(3)
       buffer.setText("   a\n   \nb   \nc      d"
-      atom.workspaceView.trigger 'whitespace:convert-spaces-to-tabs'
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
       expect(buffer.getText()).toBe '\ta\n\t\nb\t\nc\t\td')
