@@ -246,7 +246,7 @@ describe "Whitespace", ->
         atom.workspace.open('sample2.txt')
 
       runs ->
-        editor = atom.workspace.getActiveEditor()
+        editor = atom.workspace.getActiveTextEditor()
         editor.setText("foo \n")
         editor.save()
         expect(editor.getText()).toBe "foo \n"

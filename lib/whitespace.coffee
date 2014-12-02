@@ -9,13 +9,13 @@ class Whitespace
 
     @subscriptions.add atom.commands.add 'atom-workspace',
       'whitespace:remove-trailing-whitespace': =>
-        if editor = atom.workspace.getActiveEditor()
+        if editor = atom.workspace.getActiveTextEditor()
           @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
       'whitespace:convert-tabs-to-spaces': =>
-        if editor = atom.workspace.getActiveEditor()
+        if editor = atom.workspace.getActiveTextEditor()
           @convertTabsToSpaces(editor)
       'whitespace:convert-spaces-to-tabs': =>
-        if editor = atom.workspace.getActiveEditor()
+        if editor = atom.workspace.getActiveTextEditor()
           @convertSpacesToTabs(editor)
 
   destroy: ->
