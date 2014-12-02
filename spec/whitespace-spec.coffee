@@ -228,7 +228,7 @@ describe "Whitespace", ->
       atom.workspace.getActivePane().splitRight(copyActiveItem: true)
       atom.workspace.getPanes()[0].destroyItems()
 
-      editor = atom.workspace.activePaneItem
+      editor = atom.workspace.getActivePaneItem()
       editor.setText('test')
       expect(-> editor.save()).not.toThrow()
       expect(editor.getText()).toBe 'test\n'
