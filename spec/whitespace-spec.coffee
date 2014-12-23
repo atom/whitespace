@@ -67,7 +67,7 @@ describe "Whitespace", ->
     describe "when the setting is set scoped to the grammar", ->
       beforeEach ->
         atom.config.set("whitespace.removeTrailingWhitespace", true)
-        atom.config.set('.text.plain', "whitespace.removeTrailingWhitespace", false)
+        atom.config.set("whitespace.removeTrailingWhitespace", false, scopeSelector: '.text.plain')
 
       it "does not trim trailing whitespace", ->
         editor.insertText "don't trim me \n\n"
