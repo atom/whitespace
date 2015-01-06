@@ -26,9 +26,9 @@ class Whitespace
     bufferSavedSubscription = buffer.onWillSave =>
       buffer.transact =>
         scopeDescriptor = editor.getRootScopeDescriptor()
-        if atom.config.get(scopeDescriptor, 'whitespace.removeTrailingWhitespace')
+        if atom.config.get('whitespace.removeTrailingWhitespace', scope: scopeDescriptor)
           @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
-        if atom.config.get(scopeDescriptor, 'whitespace.ensureSingleTrailingNewline')
+        if atom.config.get('whitespace.ensureSingleTrailingNewline', scope: scopeDescriptor)
           @ensureSingleTrailingNewline(editor)
 
     editorDestroyedSubscription = editor.onDidDestroy ->
@@ -45,8 +45,8 @@ class Whitespace
   removeTrailingWhitespace: (editor, grammarScopeName) ->
     buffer = editor.getBuffer()
     scopeDescriptor = editor.getRootScopeDescriptor()
-    ignoreCurrentLine = atom.config.get(scopeDescriptor, 'whitespace.ignoreWhitespaceOnCurrentLine')
-    ignoreWhitespaceOnlyLines = atom.config.get(scopeDescriptor, 'whitespace.ignoreWhitespaceOnlyLines')
+    ignoreCurrentLine = atom.config.get('whitespace.ignoreWhitespaceOnCurrentLine', scope: scopeDescriptor)
+    ignoreWhitespaceOnlyLines = atom.config.get('whitespace.ignoreWhitespaceOnlyLines', scope: scopeDescriptor)
 
     buffer.backwardsScan /[ \t]+$/g, ({lineText, match, replace}) ->
       whitespaceRow = buffer.positionForCharacterIndex(match.index).row
