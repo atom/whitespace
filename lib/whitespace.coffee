@@ -1,4 +1,5 @@
 {CompositeDisposable} = require 'atom'
+_ = require 'underscore'
 
 module.exports =
 class Whitespace
@@ -45,12 +46,16 @@ class Whitespace
   removeTrailingWhitespace: (editor, grammarScopeName) ->
     buffer = editor.getBuffer()
     scopeDescriptor = editor.getRootScopeDescriptor()
+    modifiedRows = @_getModifiedRows(editor)
     ignoreCurrentLine = atom.config.get('whitespace.ignoreWhitespaceOnCurrentLine', scope: scopeDescriptor)
     ignoreWhitespaceOnlyLines = atom.config.get('whitespace.ignoreWhitespaceOnlyLines', scope: scopeDescriptor)
+    onlyModifiedLines = atom.config.get('whitespace.onlyModifiedLines', scope: scopeDescriptor)
 
     buffer.backwardsScan /[ \t]+$/g, ({lineText, match, replace}) ->
       whitespaceRow = buffer.positionForCharacterIndex(match.index).row
       cursorRows = (cursor.getBufferRow() for cursor in editor.getCursors())
+
+      return if onlyModifiedLines and modifiedRows and whitespaceRow not in modifiedRows
 
       return if ignoreCurrentLine and whitespaceRow in cursorRows
 
@@ -88,3 +93,19 @@ class Whitespace
 
     buffer.transact ->
       buffer.scan new RegExp(spacesText, 'g'), ({replace}) -> replace('\t')
+
+  # returns null if no current Git-repo or file is new and unsaved
+  # returns Array[Number] where each index is a modified row
+  _getModifiedRows: (editor) ->
+    if path = editor?.getPath()
+      if diffs = atom.project.getRepositories()[0]?.getLineDiffs(path, editor.getText())
+        modifiedRows = diffs.map ({oldStart, newStart, oldLines, newLines}) ->
+          startRow = newStart - 1
+          endRow = newStart + newLines - 2
+          # removed section
+          if newLines is 0 and oldLines > 0
+            null
+          else # new or modified section
+            [startRow..endRow]
+
+        return _.flatten(_.compact(modifiedRows))

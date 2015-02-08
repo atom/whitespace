@@ -14,6 +14,9 @@ module.exports =
     ignoreWhitespaceOnlyLines:
       type: 'boolean'
       default: false
+    onlyModifiedLines:
+      type: 'boolean'
+      default: true
     ensureSingleTrailingNewline:
       type: 'boolean'
       default: true
