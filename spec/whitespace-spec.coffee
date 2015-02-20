@@ -112,7 +112,7 @@ describe "Whitespace", ->
     beforeEach ->
       atom.config.set("whitespace.ignoreWhitespaceOnlyLines", true)
 
-    it "removes the wthiespace from all lines, excluding the whitespace-only lines", ->
+    it "removes the whitespace from all lines, excluding the whitespace-only lines", ->
       editor.insertText "1  \n2\t  \n\t \n3\n"
 
       # move cursor to bottom for preventing effect of whitespace.ignoreWhitespaceOnCurrentLine
