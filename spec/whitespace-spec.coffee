@@ -24,6 +24,7 @@ describe "Whitespace", ->
 
   describe "when the editor is destroyed", ->
     beforeEach ->
+      atom.config.set('whitespace.removeTrailingWhitespace', true)
       editor.destroy()
 
     it "unsubscribes from the buffer", ->
@@ -56,9 +57,6 @@ describe "Whitespace", ->
         expect(editor.getText()).toBe 'Some text.\n'
 
   describe "when 'whitespace.removeTrailingWhitespace' is false", ->
-    beforeEach ->
-      atom.config.set("whitespace.removeTrailingWhitespace", false)
-
     it "does not trim trailing whitespace", ->
       editor.insertText "don't trim me \n\n"
       editor.save()
@@ -76,6 +74,7 @@ describe "Whitespace", ->
 
   describe "when 'whitespace.ignoreWhitespaceOnCurrentLine' is true", ->
     beforeEach ->
+      atom.config.set('whitespace.removeTrailingWhitespace', true)
       atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true)
 
     it "removes the whitespace from all lines, excluding the current lines", ->
@@ -87,6 +86,7 @@ describe "Whitespace", ->
 
   describe "when 'whitespace.ignoreWhitespaceOnCurrentLine' is false", ->
     beforeEach ->
+      atom.config.set('whitespace.removeTrailingWhitespace', true)
       atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
 
     it "removes the whitespace from all lines, including the current lines", ->
@@ -98,6 +98,7 @@ describe "Whitespace", ->
 
   describe "when 'whitespace.ignoreWhitespaceOnlyLines' is false", ->
     beforeEach ->
+      atom.config.set('whitespace.removeTrailingWhitespace', true)
       atom.config.set("whitespace.ignoreWhitespaceOnlyLines", false)
 
     it "removes the whitespace from all lines, including the whitespace-only lines", ->
@@ -110,6 +111,7 @@ describe "Whitespace", ->
 
   describe "when 'whitespace.ignoreWhitespaceOnlyLines' is true", ->
     beforeEach ->
+      atom.config.set('whitespace.removeTrailingWhitespace', true)
       atom.config.set("whitespace.ignoreWhitespaceOnlyLines", true)
 
     it "removes the wthiespace from all lines, excluding the whitespace-only lines", ->
@@ -176,6 +178,7 @@ describe "Whitespace", ->
 
   describe "GFM whitespace trimming", ->
     beforeEach ->
+      atom.config.set('whitespace.removeTrailingWhitespace', true)
       atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
 
       waitsForPromise ->
@@ -261,6 +264,7 @@ describe "Whitespace", ->
 
     it "does not attempt to remove whitespace when the package is deactivated", ->
       atom.packages.deactivatePackage 'whitespace'
+      atom.commands.dispatch(workspaceElement, 'whitespace:remove-trailing-whitespace')
       expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
 
   describe "when the 'whitespace:convert-tabs-to-spaces' command is run", ->

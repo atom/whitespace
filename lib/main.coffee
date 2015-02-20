@@ -4,10 +4,7 @@ module.exports =
   config:
     removeTrailingWhitespace:
       type: 'boolean'
-      default: true
-      scopes:
-        '.source.jade':
-          default: false
+      default: false
     ignoreWhitespaceOnCurrentLine:
       type: 'boolean'
       default: true
