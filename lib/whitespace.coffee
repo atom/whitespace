@@ -1,5 +1,5 @@
 {CompositeDisposable} = require 'atom'
-_ = require 'underscore'
+_ = require 'underscore-plus'
 
 module.exports =
 class Whitespace

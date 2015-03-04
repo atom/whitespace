@@ -11,6 +11,6 @@
   "dependencies": {
     "fs-plus": "2.x",
     "temp": "~0.8.1",
-    "underscore": "*"
+    "underscore-plus": "^1.6.6"
   }
 }
