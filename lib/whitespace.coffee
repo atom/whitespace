@@ -46,10 +46,10 @@ class Whitespace
   removeTrailingWhitespace: (editor, grammarScopeName) ->
     buffer = editor.getBuffer()
     scopeDescriptor = editor.getRootScopeDescriptor()
-    modifiedRows = @getModifiedRows(editor)
     ignoreCurrentLine = atom.config.get('whitespace.ignoreWhitespaceOnCurrentLine', scope: scopeDescriptor)
     ignoreWhitespaceOnlyLines = atom.config.get('whitespace.ignoreWhitespaceOnlyLines', scope: scopeDescriptor)
     onlyModifiedLines = atom.config.get('whitespace.onlyModifiedLines', scope: scopeDescriptor)
+    modifiedRows = @getModifiedRows(editor) if onlyModifiedLines
 
     buffer.backwardsScan /[ \t]+$/g, ({lineText, match, replace}) ->
       whitespaceRow = buffer.positionForCharacterIndex(match.index).row
@@ -103,7 +103,7 @@ class Whitespace
   getModifiedRows: (editor) ->
     if path = editor?.getPath()
       if diffs = atom.project.getRepositories()[0]?.getLineDiffs(path, editor.getText())
-        modifiedRows = diffs.map ({oldStart, newStart, oldLines, newLines}) ->
+        modifiedRows = diffs.map ({newStart, oldLines, newLines}) ->
           startRow = newStart - 1
           endRow = newStart + newLines - 2
           # removed section
