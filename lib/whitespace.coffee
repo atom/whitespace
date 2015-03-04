@@ -1,4 +1,5 @@
 {CompositeDisposable} = require 'atom'
+_ = require 'underscore-plus'
 
 module.exports =
 class Whitespace
@@ -47,10 +48,14 @@ class Whitespace
     scopeDescriptor = editor.getRootScopeDescriptor()
     ignoreCurrentLine = atom.config.get('whitespace.ignoreWhitespaceOnCurrentLine', scope: scopeDescriptor)
     ignoreWhitespaceOnlyLines = atom.config.get('whitespace.ignoreWhitespaceOnlyLines', scope: scopeDescriptor)
+    onlyModifiedLines = atom.config.get('whitespace.onlyModifiedLines', scope: scopeDescriptor)
+    modifiedRows = @getModifiedRows(editor) if onlyModifiedLines
 
     buffer.backwardsScan /[ \t]+$/g, ({lineText, match, replace}) ->
       whitespaceRow = buffer.positionForCharacterIndex(match.index).row
       cursorRows = (cursor.getBufferRow() for cursor in editor.getCursors())
+
+      return if onlyModifiedLines and modifiedRows and whitespaceRow not in modifiedRows
 
       return if ignoreCurrentLine and whitespaceRow in cursorRows
 
@@ -88,3 +93,23 @@ class Whitespace
 
     buffer.transact ->
       buffer.scan new RegExp(spacesText, 'g'), ({replace}) -> replace('\t')
+
+  # Private: Gets the list of modified rows.
+  #
+  # * `editor` {TextEditor} to retrieve the modified rows from.
+  #
+  # Returns null if there is no repository or file is new and unsaved.
+  # Returns {Array} of modified row {Number}.
+  getModifiedRows: (editor) ->
+    if path = editor?.getPath()
+      if diffs = atom.project.getRepositories()[0]?.getLineDiffs(path, editor.getText())
+        modifiedRows = diffs.map ({newStart, oldLines, newLines}) ->
+          startRow = newStart - 1
+          endRow = newStart + newLines - 2
+          # removed section
+          if newLines is 0 and oldLines > 0
+            null
+          else # new or modified section
+            [startRow..endRow]
+
+        return _.flatten(_.compact(modifiedRows))
