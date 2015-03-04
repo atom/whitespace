@@ -46,7 +46,7 @@ class Whitespace
   removeTrailingWhitespace: (editor, grammarScopeName) ->
     buffer = editor.getBuffer()
     scopeDescriptor = editor.getRootScopeDescriptor()
-    modifiedRows = @_getModifiedRows(editor)
+    modifiedRows = @getModifiedRows(editor)
     ignoreCurrentLine = atom.config.get('whitespace.ignoreWhitespaceOnCurrentLine', scope: scopeDescriptor)
     ignoreWhitespaceOnlyLines = atom.config.get('whitespace.ignoreWhitespaceOnlyLines', scope: scopeDescriptor)
     onlyModifiedLines = atom.config.get('whitespace.onlyModifiedLines', scope: scopeDescriptor)
@@ -94,9 +94,13 @@ class Whitespace
     buffer.transact ->
       buffer.scan new RegExp(spacesText, 'g'), ({replace}) -> replace('\t')
 
-  # returns null if no current Git-repo or file is new and unsaved
-  # returns Array[Number] where each index is a modified row
-  _getModifiedRows: (editor) ->
+  # Private: Gets the list of modified rows.
+  #
+  # * `editor` {TextEditor} to retrieve the modified rows from.
+  #
+  # Returns null if there is no repository or file is new and unsaved.
+  # Returns {Array} of modified row {Number}.
+  getModifiedRows: (editor) ->
     if path = editor?.getPath()
       if diffs = atom.project.getRepositories()[0]?.getLineDiffs(path, editor.getText())
         modifiedRows = diffs.map ({oldStart, newStart, oldLines, newLines}) ->
