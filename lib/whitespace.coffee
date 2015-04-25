@@ -3,11 +3,12 @@
 module.exports =
 class Whitespace
   constructor: ->
-    @subscriptions = new CompositeDisposable
-    @subscriptions.add atom.workspace.observeTextEditors (editor) =>
+    @editorSubscriptions = new CompositeDisposable
+    @editorSubscriptions.add atom.workspace.observeTextEditors (editor) =>
       @handleEvents(editor)
 
-    @subscriptions.add atom.commands.add 'atom-workspace',
+    @commandSubscriptions = new CompositeDisposable
+    @commandSubscriptions.add atom.commands.add 'atom-workspace',
       'whitespace:remove-trailing-whitespace': =>
         if editor = atom.workspace.getActiveTextEditor()
           @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
@@ -17,9 +18,13 @@ class Whitespace
       'whitespace:convert-spaces-to-tabs': =>
         if editor = atom.workspace.getActiveTextEditor()
           @convertSpacesToTabs(editor)
+      'whitespace:save-without-modifying': =>
+        if editor = atom.workspace.getActiveTextEditor()
+          @saveWithoutModifying(editor)
 
   destroy: ->
-    @subscriptions.dispose()
+    @editorSubscriptions.dispose()
+    @commandSubscriptions.dispose()
 
   handleEvents: (editor) ->
     buffer = editor.getBuffer()
@@ -38,9 +43,18 @@ class Whitespace
       bufferDestroyedSubscription.dispose()
       bufferSavedSubscription.dispose()
 
-    @subscriptions.add(bufferSavedSubscription)
-    @subscriptions.add(editorDestroyedSubscription)
-    @subscriptions.add(bufferDestroyedSubscription)
+    @editorSubscriptions.add(bufferSavedSubscription)
+    @editorSubscriptions.add(editorDestroyedSubscription)
+    @editorSubscriptions.add(bufferDestroyedSubscription)
+
+  saveWithoutModifying: (editor) ->
+    try
+      @editorSubscriptions.dispose()
+      editor.save()
+    finally
+      @editorSubscriptions = new CompositeDisposable
+      @editorSubscriptions.add atom.workspace.observeTextEditors (editor) =>
+        @handleEvents(editor)
 
   removeTrailingWhitespace: (editor, grammarScopeName) ->
     buffer = editor.getBuffer()

@@ -286,3 +286,25 @@ describe "Whitespace", ->
       buffer.setText("   a\n   \nb   \nc      d"
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
       expect(buffer.getText()).toBe '\ta\n\t\nb\t\nc\t\td')
+
+  describe "when the 'whitespace:save-without-modifying' command is run", ->
+    beforeEach ->
+      atom.config.set("whitespace.removeTrailingWhitespace", true)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", true)
+
+    it "saves the buffer without modifying whitespace", ->
+      editor.insertText("foo   \nbar\t   \n\nbaz\n\n")
+      atom.commands.dispatch(workspaceElement, 'whitespace:save-without-modifying')
+      expect(editor.getText()).toBe "foo   \nbar\t   \n\nbaz\n\n"
+      expect(editor.isModified()).toBe false
+
+  describe "when the editor is saved normally after 'whitespace:save-without-modifying' was run", ->
+    beforeEach ->
+      atom.config.set("whitespace.removeTrailingWhitespace", true)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", true)
+      editor.insertText("foo   \nbar\t   \n\nbaz\n\n")
+      atom.commands.dispatch(workspaceElement, 'whitespace:save-without-modifying')
+
+    it "modifies whitespace before the editor saves a buffer", ->
+      editor.save()
+      expect(editor.getText()).toBe "foo\nbar\n\nbaz\n"
