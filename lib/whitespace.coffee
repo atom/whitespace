@@ -48,8 +48,8 @@ class Whitespace
     @editorSubscriptions.add(bufferDestroyedSubscription)
 
   saveWithoutModifying: (editor) ->
+    @editorSubscriptions.dispose()
     try
-      @editorSubscriptions.dispose()
       editor.save()
     finally
       @editorSubscriptions = new CompositeDisposable
