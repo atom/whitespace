@@ -359,11 +359,11 @@ describe "Whitespace", ->
   describe "when the 'whitespace:convert-spaces-to-tabs' command is run", ->
     it "removes appropriate space characters and replaces them with hard tabs", ->
       editor.setTabLength(2)
-      buffer.setText("  a\n   \nb  \nc    d\n     e")
+      buffer.setText("  a\n   \nb  \nc   d\n     e")
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
-      expect(buffer.getText().replace(/[ ]/g, '•')).toBe '\ta\n\t \nb\t\nc\t\td\n\t\t e'.replace(/[ ]/g, '•')
+      expect(buffer.getText().replace(/[ ]/g, '•').replace(/\t/g, '†')).toBe '\ta\n\t \nb\t \nc\t\td\n\t\t e'.replace(/[ ]/g, '•').replace(/\t/g, '†')
 
       editor.setTabLength(3)
-      buffer.setText("   a\n   \nb    \nc      d\n       e"
+      buffer.setText("   a\n   \nb    \nc      d\n       e")
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
-      expect(buffer.getText().replace(/[ ]/g, '•')).toBe '\ta\n\t\nb\t \nc\t\td\n\t\t e').replace(/[ ]/g, '•')
+      expect(buffer.getText().replace(/[ ]/g, '•').replace(/\t/g, '†')).toBe '\ta\n\t\nb\t  \nc\t\t d\n\t\t e'.replace(/[ ]/g, '•').replace(/\t/g, '†')

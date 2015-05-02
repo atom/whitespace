@@ -90,7 +90,29 @@ class Whitespace
 
   convertSpacesToTabs: (editor) ->
     buffer = editor.getBuffer()
-    spacesText = new Array(editor.getTabLength() + 1).join(' ')
+
+    tabLength = editor.getTabLength()
 
     buffer.transact ->
-      buffer.scan new RegExp(spacesText, 'g'), ({replace}) -> replace('\t')
+      buffer.scan /^.*[ ].*$/g, ({match, replace}) ->
+        matchText = match[0]
+        spaceCount = 0
+        charCount = 0
+        outText = ""
+        for c in matchText
+          charCount++
+          if c is " "
+            spaceCount++
+            if charCount %% tabLength is 0
+              spaceCount = 0
+              outText += "\t"
+          else
+            if spaceCount > 0
+              outText += (new Array(spaceCount+1).join(" "))
+              spaceCount = 0
+            outText += c
+
+        if spaceCount > 0
+          outText += (new Array(spaceCount+1).join(" "))
+
+        replace(outText)
