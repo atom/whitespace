@@ -330,32 +330,40 @@ describe "Whitespace", ->
 
     it "removes the trailing whitespace in the active editor", ->
       atom.commands.dispatch(workspaceElement, 'whitespace:remove-trailing-whitespace')
-      expect(buffer.getText()).toBe "foo\nbar\n\nbaz"
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe "foo\nbar\n\nbaz".replace(/[ ]/g, '•')
 
     it "does not attempt to remove whitespace when the package is deactivated", ->
       atom.packages.deactivatePackage 'whitespace'
-      expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe "foo   \nbar\t   \n\nbaz".replace(/[ ]/g, '•')
 
   describe "when the 'whitespace:convert-tabs-to-spaces' command is run", ->
-    it "removes all \t characters and replaces them with spaces using the configured tab length", ->
+    it "removes all \t characters and replaces them with appropriate spaces using the configured tab length", ->
       editor.setTabLength(2)
       buffer.setText('\ta\n\t\nb\t\nc\t\td')
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
-      expect(buffer.getText()).toBe "  a\n  \nb  \nc    d"
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe "  a\n  \nb \nc   d".replace(/[ ]/g, '•')
+
+      buffer.setText(' \ta\n  \nb\t\nc \t \td')
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe "  a\n  \nb \nc     d".replace(/[ ]/g, '•')
 
       editor.setTabLength(3)
       buffer.setText('\ta\n\t\nb\t\nc\t\td')
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
-      expect(buffer.getText()).toBe "   a\n   \nb   \nc      d"
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe "   a\n   \nb  \nc     d".replace(/[ ]/g, '•')
+
+      buffer.setText('  \ta\n\t\nb\t\nc  \t \td')
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe "   a\n   \nb  \nc        d".replace(/[ ]/g, '•')
 
   describe "when the 'whitespace:convert-spaces-to-tabs' command is run", ->
-    it "removes all space characters and replaces them with hard tabs", ->
+    it "removes appropriate space characters and replaces them with hard tabs", ->
       editor.setTabLength(2)
-      buffer.setText("  a\n  \nb  \nc    d")
+      buffer.setText("  a\n   \nb  \nc    d\n     e")
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
-      expect(buffer.getText()).toBe '\ta\n\t\nb\t\nc\t\td'
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe '\ta\n\t \nb\t\nc\t\td\n\t\t e'.replace(/[ ]/g, '•')
 
       editor.setTabLength(3)
-      buffer.setText("   a\n   \nb   \nc      d"
+      buffer.setText("   a\n   \nb    \nc      d\n       e"
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
-      expect(buffer.getText()).toBe '\ta\n\t\nb\t\nc\t\td')
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe '\ta\n\t\nb\t \nc\t\td\n\t\t e').replace(/[ ]/g, '•')

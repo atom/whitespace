@@ -77,10 +77,16 @@ class Whitespace
 
   convertTabsToSpaces: (editor) ->
     buffer = editor.getBuffer()
-    spacesText = new Array(editor.getTabLength() + 1).join(' ')
+
+    tabLength = editor.getTabLength()
 
     buffer.transact ->
-      buffer.scan /\t/g, ({replace}) -> replace(spacesText)
+      buffer.scan /^.*\t.*$/g, ({matchText, replace}) ->
+        while match = /^([^\t]*)\t(.*)$/.exec(matchText)
+          newTabLength = tabLength-(match[1].length %% tabLength)
+          matchText = match[1] + (new Array(newTabLength+1).join(" ")) + match[2]
+
+        replace(matchText)
 
   convertSpacesToTabs: (editor) ->
     buffer = editor.getBuffer()
