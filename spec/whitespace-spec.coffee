@@ -80,8 +80,8 @@ describe "Whitespace", ->
 
     it "removes the whitespace from all lines, excluding the current lines", ->
       editor.insertText "1  \n2  \n3  \n"
-      editor.setCursorBufferPosition([1,3])
-      editor.addCursorAtBufferPosition([2,3])
+      editor.setCursorBufferPosition([1, 3])
+      editor.addCursorAtBufferPosition([2, 3])
       editor.save()
       expect(editor.getText()).toBe "1\n2  \n3  \n"
 
@@ -91,8 +91,8 @@ describe "Whitespace", ->
 
     it "removes the whitespace from all lines, including the current lines", ->
       editor.insertText "1  \n2  \n3  \n"
-      editor.setCursorBufferPosition([1,3])
-      editor.addCursorAtBufferPosition([2,3])
+      editor.setCursorBufferPosition([1, 3])
+      editor.addCursorAtBufferPosition([2, 3])
       editor.save()
       expect(editor.getText()).toBe "1\n2\n3\n"
 
@@ -151,14 +151,14 @@ describe "Whitespace", ->
 
     it "does not move the cursor when the new line is added", ->
       editor.insertText "foo\nboo"
-      editor.setCursorBufferPosition([0,3])
+      editor.setCursorBufferPosition([0, 3])
       editor.save()
       expect(editor.getText()).toBe "foo\nboo\n"
-      expect(editor.getCursorBufferPosition()).toEqual([0,3])
+      expect(editor.getCursorBufferPosition()).toEqual([0, 3])
 
     it "preserves selections when saving on last line", ->
       editor.insertText "foo"
-      editor.setCursorBufferPosition([0,0])
+      editor.setCursorBufferPosition([0, 0])
       editor.selectToEndOfLine()
       originalSelectionRange = editor.getLastSelection().getBufferRange()
       editor.save()
@@ -212,7 +212,7 @@ describe "Whitespace", ->
       atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true)
 
       editor.insertText "foo \nline break!"
-      editor.setCursorBufferPosition([0,4])
+      editor.setCursorBufferPosition([0, 4])
       editor.save()
       expect(editor.getText()).toBe "foo \nline break!\n"
 
