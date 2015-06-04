@@ -31,6 +31,10 @@ describe "Whitespace", ->
       buffer.save()
       expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
 
+    it "disposables to be removed", ->
+      whitespace = atom.packages.getActivePackage('whitespace').mainModule.whitespace
+      expect(whitespace.subscriptions.disposables.size).toBe 2
+
   describe "when 'whitespace.removeTrailingWhitespace' is true", ->
     beforeEach ->
       atom.config.set("whitespace.removeTrailingWhitespace", true)
