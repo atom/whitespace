@@ -31,12 +31,16 @@ class Whitespace
         if atom.config.get('whitespace.ensureSingleTrailingNewline', scope: scopeDescriptor)
           @ensureSingleTrailingNewline(editor)
 
-    editorDestroyedSubscription = editor.onDidDestroy ->
+    editorDestroyedSubscription = editor.onDidDestroy =>
       bufferSavedSubscription.dispose()
+      @subscriptions.remove(bufferSavedSubscription)
       editorDestroyedSubscription.dispose()
-    bufferDestroyedSubscription = buffer.onDidDestroy ->
+      @subscriptions.remove(editorDestroyedSubscription)
+    bufferDestroyedSubscription = buffer.onDidDestroy =>
       bufferDestroyedSubscription.dispose()
+      @subscriptions.remove(bufferDestroyedSubscription)
       bufferSavedSubscription.dispose()
+      @subscriptions.remove(bufferSavedSubscription)
 
     @subscriptions.add(bufferSavedSubscription)
     @subscriptions.add(editorDestroyedSubscription)
