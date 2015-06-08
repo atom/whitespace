@@ -31,9 +31,12 @@ describe "Whitespace", ->
       buffer.save()
       expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
 
-    it "disposables to be removed", ->
-      whitespace = atom.packages.getActivePackage('whitespace').mainModule.whitespace
+    it "does not leak subscriptions", ->
+      {whitespace} = atom.packages.getActivePackage('whitespace').mainModule
       expect(whitespace.subscriptions.disposables.size).toBe 2
+
+      atom.packages.deactivatePackage('whitespace')
+      expect(whitespace.subscriptions.disposables).toBeNull()
 
   describe "when 'whitespace.removeTrailingWhitespace' is true", ->
     beforeEach ->

@@ -33,18 +33,13 @@ class Whitespace
 
     editorDestroyedSubscription = editor.onDidDestroy =>
       bufferSavedSubscription.dispose()
-      @subscriptions.remove(bufferSavedSubscription)
       editorDestroyedSubscription.dispose()
-      @subscriptions.remove(editorDestroyedSubscription)
-    bufferDestroyedSubscription = buffer.onDidDestroy =>
-      bufferDestroyedSubscription.dispose()
-      @subscriptions.remove(bufferDestroyedSubscription)
-      bufferSavedSubscription.dispose()
+
       @subscriptions.remove(bufferSavedSubscription)
+      @subscriptions.remove(editorDestroyedSubscription)
 
     @subscriptions.add(bufferSavedSubscription)
     @subscriptions.add(editorDestroyedSubscription)
-    @subscriptions.add(bufferDestroyedSubscription)
 
   removeTrailingWhitespace: (editor, grammarScopeName) ->
     buffer = editor.getBuffer()
