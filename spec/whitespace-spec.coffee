@@ -22,6 +22,12 @@ describe "Whitespace", ->
     waitsForPromise ->
       atom.packages.activatePackage('whitespace')
 
+    atom.config.set("whitespace.ensureSingleTrailingNewline", true)
+
+  describe "sanity checks", ->
+    it 'should start with the package active', ->
+      expect(atom.packages.isPackageActive('whitespace')).toBe true
+
   describe "when the editor is destroyed", ->
     beforeEach ->
       editor.destroy()
@@ -66,6 +72,9 @@ describe "Whitespace", ->
     beforeEach ->
       atom.config.set("whitespace.removeTrailingWhitespace", false)
 
+    it "actually set whitespace.removeTrailingWhitespace to false", ->
+      expect(atom.config.get("whitespace.removeTrailingWhitespace")).toBe false
+
     it "does not trim trailing whitespace", ->
       editor.insertText "don't trim me \n\n"
       editor.save()
@@ -84,6 +93,13 @@ describe "Whitespace", ->
   describe "when 'whitespace.ignoreWhitespaceOnCurrentLine' is true", ->
     beforeEach ->
       atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true)
+      atom.config.set("whitespace.removeTrailingWhitespace", true)
+
+    it "actually set whitespace.removeTrailingWhitespace to true", ->
+      expect(atom.config.get("whitespace.removeTrailingWhitespace")).toBe true
+
+    it "actually set whitespace.ignoreWhitespaceOnCurrentLine to true", ->
+      expect(atom.config.get("whitespace.ignoreWhitespaceOnCurrentLine")).toBe true
 
     it "removes the whitespace from all lines, excluding the current lines", ->
       editor.insertText "1  \n2  \n3  \n"
@@ -95,6 +111,10 @@ describe "Whitespace", ->
   describe "when 'whitespace.ignoreWhitespaceOnCurrentLine' is false", ->
     beforeEach ->
       atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
+      atom.config.set("whitespace.removeTrailingWhitespace", true)
+
+    it "actually set whitespace.ignoreWhitespaceOnCurrentLine to false", ->
+      expect(atom.config.get("whitespace.ignoreWhitespaceOnCurrentLine")).toBe false
 
     it "removes the whitespace from all lines, including the current lines", ->
       editor.insertText "1  \n2  \n3  \n"
@@ -106,6 +126,17 @@ describe "Whitespace", ->
   describe "when 'whitespace.ignoreWhitespaceOnlyLines' is false", ->
     beforeEach ->
       atom.config.set("whitespace.ignoreWhitespaceOnlyLines", false)
+      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
+      atom.config.set("whitespace.removeTrailingWhitespace", true)
+
+    it "actually set whitespace.ignoreWhitespaceOnlyLines to false", ->
+      expect(atom.config.get("whitespace.ignoreWhitespaceOnlyLines")).toBe false
+
+    it "actually set whitespace.ignoreWhitespaceOnCurrentLine to false", ->
+      expect(atom.config.get("whitespace.ignoreWhitespaceOnCurrentLine")).toBe false
+
+    it "actually set whitespace.removeTrailingWhitespace to true", ->
+      expect(atom.config.get("whitespace.removeTrailingWhitespace")).toBe true
 
     it "removes the whitespace from all lines, including the whitespace-only lines", ->
       editor.insertText "1  \n2\t  \n\t \n3\n"
@@ -118,6 +149,17 @@ describe "Whitespace", ->
   describe "when 'whitespace.ignoreWhitespaceOnlyLines' is true", ->
     beforeEach ->
       atom.config.set("whitespace.ignoreWhitespaceOnlyLines", true)
+      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
+      atom.config.set("whitespace.removeTrailingWhitespace", true)
+
+    it "actually set whitespace.ignoreWhitespaceOnlyLines to true", ->
+      expect(atom.config.get("whitespace.ignoreWhitespaceOnlyLines")).toBe true
+
+    it "actually set whitespace.ignoreWhitespaceOnCurrentLine to false", ->
+      expect(atom.config.get("whitespace.ignoreWhitespaceOnCurrentLine")).toBe false
+
+    it "actually set whitespace.removeTrailingWhitespace to true", ->
+      expect(atom.config.get("whitespace.removeTrailingWhitespace")).toBe true
 
     it "removes the whitespace from all lines, excluding the whitespace-only lines", ->
       editor.insertText "1  \n2\t  \n\t \n3\n"
@@ -184,12 +226,31 @@ describe "Whitespace", ->
   describe "GFM whitespace trimming", ->
     beforeEach ->
       atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
+      atom.config.set("whitespace.ignoreWhitespaceOnlyLines", false)
+      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
+      atom.config.set("whitespace.removeTrailingWhitespace", true)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", true)
 
       waitsForPromise ->
         atom.packages.activatePackage("language-gfm")
 
       runs ->
         editor.setGrammar(atom.grammars.grammarForScopeName("source.gfm"))
+
+    it "actually set whitespace.ignoreWhitespaceOnCurrentLine to false", ->
+      expect(atom.config.get("whitespace.ignoreWhitespaceOnCurrentLine")).toBe false
+
+    it "actually set whitespace.ignoreWhitespaceOnlyLines to false", ->
+      expect(atom.config.get("whitespace.ignoreWhitespaceOnlyLines")).toBe false
+
+    it "actually set whitespace.ignoreWhitespaceOnCurrentLine to false", ->
+      expect(atom.config.get("whitespace.ignoreWhitespaceOnCurrentLine")).toBe false
+
+    it "actually set whitespace.removeTrailingWhitespace to true", ->
+      expect(atom.config.get("whitespace.removeTrailingWhitespace")).toBe true
+
+    it "actually set whitespace.ensureSingleTrailingNewline to true", ->
+      expect(atom.config.get("whitespace.ensureSingleTrailingNewline")).toBe true
 
     it "trims GFM text with a single space", ->
       editor.insertText "foo \nline break!"
@@ -224,6 +285,7 @@ describe "Whitespace", ->
       expect(editor.getText()).toBe "foo \nline break!\n"
 
     it "respects 'whitespace.ignoreWhitespaceOnlyLines' setting", ->
+      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
       atom.config.set("whitespace.ignoreWhitespaceOnlyLines", true)
 
       editor.insertText "\t \nline break!"
@@ -232,6 +294,10 @@ describe "Whitespace", ->
 
   describe "when the editor is split", ->
     it "does not throw exceptions when the editor is saved after the split is closed (regression)", ->
+      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
+      atom.config.set("whitespace.ignoreWhitespaceOnlyLines", false)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", true)
+
       atom.workspace.getActivePane().splitRight(copyActiveItem: true)
       atom.workspace.getPanes()[0].destroyItems()
 
@@ -241,6 +307,13 @@ describe "Whitespace", ->
       expect(editor.getText()).toBe 'test\n'
 
   describe "when deactivated", ->
+    beforeEach ->
+      waitsForPromise ->
+        atom.packages.activatePackage("whitespace")
+
+    it 'should start with the package active', ->
+      expect(atom.packages.isPackageActive('whitespace')).toBe true
+
     it "does not remove trailing whitespace from editors opened after deactivation", ->
       atom.config.set("whitespace.removeTrailingWhitespace", true)
       atom.packages.deactivatePackage('whitespace')
@@ -264,32 +337,40 @@ describe "Whitespace", ->
 
     it "removes the trailing whitespace in the active editor", ->
       atom.commands.dispatch(workspaceElement, 'whitespace:remove-trailing-whitespace')
-      expect(buffer.getText()).toBe "foo\nbar\n\nbaz"
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe "foo\nbar\n\nbaz".replace(/[ ]/g, '•')
 
     it "does not attempt to remove whitespace when the package is deactivated", ->
       atom.packages.deactivatePackage 'whitespace'
-      expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe "foo   \nbar\t   \n\nbaz".replace(/[ ]/g, '•')
 
   describe "when the 'whitespace:convert-tabs-to-spaces' command is run", ->
-    it "removes all \t characters and replaces them with spaces using the configured tab length", ->
+    it "removes all \t characters and replaces them with appropriate spaces using the configured tab length", ->
       editor.setTabLength(2)
       buffer.setText('\ta\n\t\nb\t\nc\t\td')
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
-      expect(buffer.getText()).toBe "  a\n  \nb  \nc    d"
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe "  a\n  \nb \nc   d".replace(/[ ]/g, '•')
+
+      buffer.setText(' \ta\n  \nb\t\nc \t \td')
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe "  a\n  \nb \nc     d".replace(/[ ]/g, '•')
 
       editor.setTabLength(3)
       buffer.setText('\ta\n\t\nb\t\nc\t\td')
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
-      expect(buffer.getText()).toBe "   a\n   \nb   \nc      d"
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe "   a\n   \nb  \nc     d".replace(/[ ]/g, '•')
+
+      buffer.setText('  \ta\n\t\nb\t\nc  \t \td')
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
+      expect(buffer.getText().replace(/[ ]/g, '•')).toBe "   a\n   \nb  \nc        d".replace(/[ ]/g, '•')
 
   describe "when the 'whitespace:convert-spaces-to-tabs' command is run", ->
-    it "removes all space characters and replaces them with hard tabs", ->
+    it "removes appropriate space characters and replaces them with hard tabs", ->
       editor.setTabLength(2)
-      buffer.setText("  a\n  \nb  \nc    d")
+      buffer.setText("  a\n   \nb  \nc   d\n     e")
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
-      expect(buffer.getText()).toBe '\ta\n\t\nb\t\nc\t\td'
+      expect(buffer.getText().replace(/[ ]/g, '•').replace(/\t/g, '†')).toBe '\ta\n\t \nb\t \nc\t\td\n\t\t e'.replace(/[ ]/g, '•').replace(/\t/g, '†')
 
       editor.setTabLength(3)
-      buffer.setText("   a\n   \nb   \nc      d"
+      buffer.setText("   a\n   \nb    \nc      d\n       e")
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
-      expect(buffer.getText()).toBe '\ta\n\t\nb\t\nc\t\td')
+      expect(buffer.getText().replace(/[ ]/g, '•').replace(/\t/g, '†')).toBe '\ta\n\t\nb\t  \nc\t\t d\n\t\t e'.replace(/[ ]/g, '•').replace(/\t/g, '†')
