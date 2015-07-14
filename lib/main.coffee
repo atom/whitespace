@@ -8,6 +8,9 @@ module.exports =
       scopes:
         '.source.jade':
           default: false
+    ignoreMarkdownLineBreak:
+      type: 'boolean'
+      default: true
     ignoreWhitespaceOnCurrentLine:
       type: 'boolean'
       default: true
