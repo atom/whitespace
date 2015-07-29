@@ -12,7 +12,7 @@ module.exports =
       type: 'boolean'
       default: true
       description: '''
-      Markdown uses two ore more spaces at the end of a line to signify a line break. Enable this
+      Markdown uses two or more spaces at the end of a line to signify a line break. Enable this
       option to keep this whitespace, even if other settings would remove it.
       '''
     ignoreWhitespaceOnCurrentLine:
