@@ -182,10 +182,10 @@ describe "Whitespace", ->
       expect(editor.getText()).toBe "no trailing newline"
 
   describe "GFM whitespace trimming", ->
-    describe 'when ignoreMarkdownLineBreak is true', ->
+    describe 'when keepMarkdownLineBreakWhitespace is true', ->
       beforeEach ->
         atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
-        atom.config.set("whitespace.ignoreMarkdownLineBreak", true)
+        atom.config.set("whitespace.keepMarkdownLineBreakWhitespace", true)
 
         waitsForPromise ->
           atom.packages.activatePackage("language-gfm")
@@ -232,10 +232,10 @@ describe "Whitespace", ->
         editor.save()
         expect(editor.getText()).toBe "\t \nline break!\n"
 
-    describe 'when ignoreMarkdownLineBreak is false', ->
+    describe 'when keepMarkdownLineBreakWhitespace is false', ->
       beforeEach ->
         atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
-        atom.config.set("whitespace.ignoreMarkdownLineBreak", false)
+        atom.config.set("whitespace.keepMarkdownLineBreakWhitespace", false)
 
         waitsForPromise ->
           atom.packages.activatePackage("language-gfm")
