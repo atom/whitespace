@@ -182,53 +182,105 @@ describe "Whitespace", ->
       expect(editor.getText()).toBe "no trailing newline"
 
   describe "GFM whitespace trimming", ->
-    beforeEach ->
-      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
+    describe 'when keepMarkdownLineBreakWhitespace is true', ->
+      beforeEach ->
+        atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
+        atom.config.set("whitespace.keepMarkdownLineBreakWhitespace", true)
 
-      waitsForPromise ->
-        atom.packages.activatePackage("language-gfm")
+        waitsForPromise ->
+          atom.packages.activatePackage("language-gfm")
 
-      runs ->
-        editor.setGrammar(atom.grammars.grammarForScopeName("source.gfm"))
+        runs ->
+          editor.setGrammar(atom.grammars.grammarForScopeName("source.gfm"))
 
-    it "trims GFM text with a single space", ->
-      editor.insertText "foo \nline break!"
-      editor.save()
-      expect(editor.getText()).toBe "foo\nline break!\n"
+      it "trims GFM text with a single space", ->
+        editor.insertText "foo \nline break!"
+        editor.save()
+        expect(editor.getText()).toBe "foo\nline break!\n"
 
-    it "leaves GFM text with double spaces alone", ->
-      editor.insertText "foo  \nline break!"
-      editor.save()
-      expect(editor.getText()).toBe "foo  \nline break!\n"
+      it "leaves GFM text with double spaces alone", ->
+        editor.insertText "foo  \nline break!"
+        editor.save()
+        expect(editor.getText()).toBe "foo  \nline break!\n"
 
-    it "trims GFM text with a more than two spaces", ->
-      editor.insertText "foo   \nline break!"
-      editor.save()
-      expect(editor.getText()).toBe "foo\nline break!\n"
+      it "leaves GFM text with a more than two spaces", ->
+        editor.insertText "foo   \nline break!"
+        editor.save()
+        expect(editor.getText()).toBe "foo   \nline break!\n"
 
-    it "trims empty lines", ->
-      editor.insertText "foo\n  "
-      editor.save()
-      expect(editor.getText()).toBe "foo\n"
+      it "trims empty lines", ->
+        editor.insertText "foo\n  "
+        editor.save()
+        expect(editor.getText()).toBe "foo\n"
 
-      editor.setText "foo\n "
-      editor.save()
-      expect(editor.getText()).toBe "foo\n"
+        editor.setText "foo\n "
+        editor.save()
+        expect(editor.getText()).toBe "foo\n"
 
-    it "respects 'whitespace.ignoreWhitespaceOnCurrentLine' setting", ->
-      atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true)
+      it "respects 'whitespace.ignoreWhitespaceOnCurrentLine' setting", ->
+        atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true)
 
-      editor.insertText "foo \nline break!"
-      editor.setCursorBufferPosition([0, 4])
-      editor.save()
-      expect(editor.getText()).toBe "foo \nline break!\n"
+        editor.insertText "foo \nline break!"
+        editor.setCursorBufferPosition([0, 4])
+        editor.save()
+        expect(editor.getText()).toBe "foo \nline break!\n"
 
-    it "respects 'whitespace.ignoreWhitespaceOnlyLines' setting", ->
-      atom.config.set("whitespace.ignoreWhitespaceOnlyLines", true)
+      it "respects 'whitespace.ignoreWhitespaceOnlyLines' setting", ->
+        atom.config.set("whitespace.ignoreWhitespaceOnlyLines", true)
 
-      editor.insertText "\t \nline break!"
-      editor.save()
-      expect(editor.getText()).toBe "\t \nline break!\n"
+        editor.insertText "\t \nline break!"
+        editor.save()
+        expect(editor.getText()).toBe "\t \nline break!\n"
+
+    describe 'when keepMarkdownLineBreakWhitespace is false', ->
+      beforeEach ->
+        atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
+        atom.config.set("whitespace.keepMarkdownLineBreakWhitespace", false)
+
+        waitsForPromise ->
+          atom.packages.activatePackage("language-gfm")
+
+        runs ->
+          editor.setGrammar(atom.grammars.grammarForScopeName("source.gfm"))
+
+      it "trims GFM text with a single space", ->
+        editor.insertText "foo \nline break!"
+        editor.save()
+        expect(editor.getText()).toBe "foo\nline break!\n"
+
+      it "trims GFM text with two spaces", ->
+        editor.insertText "foo  \nline break!"
+        editor.save()
+        expect(editor.getText()).toBe "foo\nline break!\n"
+
+      it "trims GFM text with a more than two spaces", ->
+        editor.insertText "foo   \nline break!"
+        editor.save()
+        expect(editor.getText()).toBe "foo\nline break!\n"
+
+      it "trims empty lines", ->
+        editor.insertText "foo\n  "
+        editor.save()
+        expect(editor.getText()).toBe "foo\n"
+
+        editor.setText "foo\n "
+        editor.save()
+        expect(editor.getText()).toBe "foo\n"
+
+      it "respects 'whitespace.ignoreWhitespaceOnCurrentLine' setting", ->
+        atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", true)
+
+        editor.insertText "foo \nline break!"
+        editor.setCursorBufferPosition([0, 4])
+        editor.save()
+        expect(editor.getText()).toBe "foo \nline break!\n"
+
+      it "respects 'whitespace.ignoreWhitespaceOnlyLines' setting", ->
+        atom.config.set("whitespace.ignoreWhitespaceOnlyLines", true)
+
+        editor.insertText "\t \nline break!"
+        editor.save()
+        expect(editor.getText()).toBe "\t \nline break!\n"
 
   describe "when the editor is split", ->
     it "does not throw exceptions when the editor is saved after the split is closed (regression)", ->

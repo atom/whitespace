@@ -56,9 +56,9 @@ class Whitespace
       [whitespace] = match
       return if ignoreWhitespaceOnlyLines and whitespace is lineText
 
-      if grammarScopeName is 'source.gfm'
-        # GitHub Flavored Markdown permits two spaces at the end of a line
-        replace('') unless whitespace is '  ' and whitespace isnt lineText
+      if grammarScopeName is 'source.gfm' and atom.config.get('whitespace.keepMarkdownLineBreakWhitespace')
+        # GitHub Flavored Markdown permits two or more spaces at the end of a line
+        replace('') unless whitespace.length >= 2 and whitespace isnt lineText
       else
         replace('')
 
