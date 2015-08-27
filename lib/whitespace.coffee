@@ -32,10 +32,12 @@ class Whitespace
           @ensureSingleTrailingNewline(editor)
 
     editorTextInsertedSubscription = editor.onDidInsertText (event) =>
-      editor.transact =>
-        scopeDescriptor = editor.getRootScopeDescriptor()
-        if atom.config.get('whitespace.removeTrailingWhitespace', scope: scopeDescriptor)
-          unless atom.config.get('whitespace.ignoreWhitespaceOnlyLines', scope: scopeDescriptor)
+      return unless event.text is '\n'
+      scopeDescriptor = editor.getRootScopeDescriptor()
+
+      if atom.config.get('whitespace.removeTrailingWhitespace', scope: scopeDescriptor)
+        unless atom.config.get('whitespace.ignoreWhitespaceOnlyLines', scope: scopeDescriptor)
+          editor.transact =>
             @clearBlankLineOnNewline(editor, event)
 
     editorDestroyedSubscription = editor.onDidDestroy =>
@@ -99,9 +101,8 @@ class Whitespace
       buffer.scan new RegExp(spacesText, 'g'), ({replace}) -> replace('\t')
 
   clearBlankLineOnNewline: (editor, event) ->
-    return unless event.text is "\n"
     buffer = editor.getBuffer()
-    previousRow = editor.getCursorBufferPosition().row - 1
+    previousRow = event.range.start.row
 
     if buffer.isRowBlank(previousRow)
       editor.setIndentationForBufferRow(previousRow, 0)
