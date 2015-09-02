@@ -62,6 +62,28 @@ describe "Whitespace", ->
         editor.save()
         expect(editor.getText()).toBe 'Some text.\n'
 
+    it "clears blank lines when the editor inserts a newline", ->
+      # Need autoIndent to be true
+      atom.config.set 'editor.autoIndent', true
+      # Create an indent level and insert a newline
+      editor.setIndentationForBufferRow 0, 1
+      editor.insertText '\n'
+      expect(editor.getText()).toBe '\n  '
+
+      # Undo the newline insert and redo it
+      editor.undo()
+      expect(editor.getText()).toBe '  '
+      editor.redo()
+      expect(editor.getText()).toBe '\n  '
+
+      # Test for multiple cursors, possibly without blank lines
+      editor.insertText 'foo'
+      editor.insertText '\n'
+      editor.setCursorBufferPosition [1, 5]    # Cursor after 'foo'
+      editor.addCursorAtBufferPosition [2, 2]  # Cursor on the next line (blank)
+      editor.insertText '\n'
+      expect(editor.getText()).toBe '\n  foo\n  \n\n  '
+
   describe "when 'whitespace.removeTrailingWhitespace' is false", ->
     beforeEach ->
       atom.config.set("whitespace.removeTrailingWhitespace", false)
