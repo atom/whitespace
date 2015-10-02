@@ -62,6 +62,31 @@ describe "Whitespace", ->
         editor.save()
         expect(editor.getText()).toBe 'Some text.\n'
 
+  describe "when 'whitespace.removeTrailingWhitespace' is false", ->
+    beforeEach ->
+      atom.config.set("whitespace.removeTrailingWhitespace", false)
+
+    it "does not trim trailing whitespace", ->
+      editor.insertText "don't trim me \n\n"
+      editor.save()
+      expect(editor.getText()).toBe "don't trim me \n"
+
+    describe "when the setting is set scoped to the grammar", ->
+      beforeEach ->
+        atom.config.set("whitespace.removeTrailingWhitespace", true)
+        atom.config.set("whitespace.removeTrailingWhitespace", false, scopeSelector: '.text.plain')
+
+      it "does not trim trailing whitespace", ->
+        editor.insertText "don't trim me \n\n"
+        editor.save()
+        expect(editor.getText()).toBe "don't trim me \n"
+
+  describe "when 'whitespace.removeTrailingWhitespaceAsYouType' is true", ->
+
+    beforeEach ->
+      atom.config.set("whitespace.removeTrailingWhitespace", true)
+      atom.config.set("whitespace.removeTrailingWhitespaceAsYouType", true)
+
     it "clears blank lines when the editor inserts a newline", ->
       # Need autoIndent to be true
       atom.config.set 'editor.autoIndent', true
@@ -84,24 +109,32 @@ describe "Whitespace", ->
       editor.insertText '\n'
       expect(editor.getText()).toBe '\n  foo\n  \n\n  '
 
-  describe "when 'whitespace.removeTrailingWhitespace' is false", ->
+  describe "when 'whitespace.removeTrailingWhitespaceAsYouType' is false", ->
+
     beforeEach ->
-      atom.config.set("whitespace.removeTrailingWhitespace", false)
+      atom.config.set("whitespace.removeTrailingWhitespaceAsYouType", false)
 
-    it "does not trim trailing whitespace", ->
-      editor.insertText "don't trim me \n\n"
-      editor.save()
-      expect(editor.getText()).toBe "don't trim me \n"
+    it "does not affect lines when the editor inserts a newline", ->
+      # Need autoIndent to be true
+      atom.config.set 'editor.autoIndent', true
+      # Create an indent level and insert a newline
+      editor.setIndentationForBufferRow 0, 1
+      editor.insertText '\n'
+      expect(editor.getText()).toBe '  \n  '
 
-    describe "when the setting is set scoped to the grammar", ->
-      beforeEach ->
-        atom.config.set("whitespace.removeTrailingWhitespace", true)
-        atom.config.set("whitespace.removeTrailingWhitespace", false, scopeSelector: '.text.plain')
+      # Undo the newline insert and redo it
+      editor.undo()
+      expect(editor.getText()).toBe '  '
+      editor.redo()
+      expect(editor.getText()).toBe '  \n  '
 
-      it "does not trim trailing whitespace", ->
-        editor.insertText "don't trim me \n\n"
-        editor.save()
-        expect(editor.getText()).toBe "don't trim me \n"
+      # Test for multiple cursors, possibly without blank lines
+      editor.insertText 'foo'
+      editor.insertText '\n'
+      editor.setCursorBufferPosition [1, 5]    # Cursor after 'foo'
+      editor.addCursorAtBufferPosition [2, 2]  # Cursor on the next line (blank)
+      editor.insertText '\n'
+      expect(editor.getText()).toBe '  \n  foo\n  \n  \n  '
 
   describe "when 'whitespace.ignoreWhitespaceOnCurrentLine' is true", ->
     beforeEach ->

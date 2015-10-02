@@ -8,6 +8,9 @@ module.exports =
       scopes:
         '.source.jade':
           default: false
+    removeTrailingWhitespaceAsYouType:
+      type: 'boolean'
+      default: false
     keepMarkdownLineBreakWhitespace:
       type: 'boolean'
       default: true
