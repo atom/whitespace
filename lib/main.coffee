@@ -8,7 +8,7 @@ module.exports =
       scopes:
         '.source.jade':
           default: false
-      description: 'Automatically remove whitespace characters at ends of lines when the buffer is saved. To disable/enable for a certain language, use syntax-scoped properties in your `config.cson`. See [the README](https://github.com/atom/whitespace#readme) for more information.'
+      description: 'Automatically remove whitespace characters at ends of lines when the buffer is saved. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`.'
     keepMarkdownLineBreakWhitespace:
       type: 'boolean'
       default: true
@@ -16,15 +16,15 @@ module.exports =
     ignoreWhitespaceOnCurrentLine:
       type: 'boolean'
       default: true
-      description: 'Skip removing trailing whitespace on the line which the cursor is positioned on when the buffer is saved. To disable/enable for a certain language, use syntax-scoped properties in your `config.cson`. See [the README](https://github.com/atom/whitespace#readme) for more information.'
+      description: 'Skip removing trailing whitespace on the line which the cursor is positioned on when the buffer is saved. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`.'
     ignoreWhitespaceOnlyLines:
       type: 'boolean'
       default: false
-      description: 'Skip removing trailing whitespace on lines which consist only of whitespace characters. To disable/enable for a certain language, use syntax-scoped properties in your `config.cson`. See [the README](https://github.com/atom/whitespace#readme) for more information.'
+      description: 'Skip removing trailing whitespace on lines which consist only of whitespace characters. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`.'
     ensureSingleTrailingNewline:
       type: 'boolean'
       default: true
-      description: 'If the buffer doesn\'t end with a newline charcter when it\'s saved, then append one. If the buffer ends with more than one newline character, remove all but one. To disable/enable for a certain language, use syntax-scoped properties in your `config.cson`. See [the README](https://github.com/atom/whitespace#readme) for more information.'
+      description: 'If the buffer doesn\'t end with a newline charcter when it\'s saved, then append one. If it ends with more than one newline, remove all but one. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`.'
 
   activate: ->
     @whitespace = new Whitespace()
