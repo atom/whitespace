@@ -24,7 +24,7 @@ module.exports =
     ensureSingleTrailingNewline:
       type: 'boolean'
       default: true
-      description: 'If the buffer doesn\'t end with a newline charcter when it\'s saved, then append one. If it ends with more than one newline, remove all but one. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`.'
+      description: 'If the buffer doesn\'t end with a newline character when it\'s saved, then append one. If it ends with more than one newline, remove all but one. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`.'
 
   activate: ->
     @whitespace = new Whitespace()
