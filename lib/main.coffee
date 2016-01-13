@@ -11,7 +11,7 @@ module.exports =
       description: 'Automatically remove whitespace characters at ends of lines when the buffer is saved. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`.'
     removeTrailingWhitespaceAsYouType:
       type: 'boolean'
-      default: false
+      default: true
       description: 'Automatically removes all whitespace from blank lines as you type. This option has no effect unless Remove Trailing Whitespace is also enabled.'
     keepMarkdownLineBreakWhitespace:
       type: 'boolean'
