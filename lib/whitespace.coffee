@@ -28,6 +28,8 @@ class Whitespace
         scopeDescriptor = editor.getRootScopeDescriptor()
         if atom.config.get('whitespace.removeTrailingWhitespace', scope: scopeDescriptor)
           @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
+        if atom.config.get('whitespace.removeTrailingNewlines', scope: scopeDescriptor)
+          @removeTrailingNewlines(editor)
         if atom.config.get('whitespace.ensureSingleTrailingNewline', scope: scopeDescriptor)
           @ensureSingleTrailingNewline(editor)
 
@@ -74,14 +76,17 @@ class Whitespace
       else
         replace('')
 
+  removeTrailingNewlines: (editor) ->
+    buffer = editor.getBuffer()
+    row = buffer.getLastRow()
+
+    buffer.deleteRow(row--) while row and buffer.lineForRow(row) is ''
+
   ensureSingleTrailingNewline: (editor) ->
     buffer = editor.getBuffer()
     lastRow = buffer.getLastRow()
 
-    if buffer.lineForRow(lastRow) is ''
-      row = lastRow - 1
-      buffer.deleteRow(row--) while row and buffer.lineForRow(row) is ''
-    else
+    if buffer.lineForRow(lastRow) isnt ''
       selectedBufferRanges = editor.getSelectedBufferRanges()
       buffer.append('\n')
       editor.setSelectedBufferRanges(selectedBufferRanges)
