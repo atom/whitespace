@@ -41,7 +41,12 @@
     "ensureSingleTrailingNewline": {
       "type": "boolean",
       "default": true,
-      "description": "If the buffer doesn't end with a newline character when it's saved, then append one. If it ends with more than one newline, remove all but one. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`."
+      "description": "Ensure that the buffer always ends with exactly one newline character when it's saved. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`."
+    },
+    "removeTrailingNewlines": {
+      "type": "boolean",
+      "default": true,
+      "description": "Automatically remove any extra newlines at the end of the buffer when it's saved. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`."
     }
   },
   "devDependencies": {

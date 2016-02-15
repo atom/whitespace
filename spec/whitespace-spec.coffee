@@ -152,14 +152,10 @@ describe "Whitespace", ->
   describe "when 'whitespace.ensureSingleTrailingNewline' is true", ->
     beforeEach ->
       atom.config.set("whitespace.ensureSingleTrailingNewline", true)
+      atom.config.set("whitespace.removeTrailingNewlines", false)
 
     it "adds a trailing newline when there is no trailing newline", ->
       editor.insertText "foo"
-      editor.save()
-      expect(editor.getText()).toBe "foo\n"
-
-    it "removes extra trailing newlines and only keeps one", ->
-      editor.insertText "foo\n\n\n\n"
       editor.save()
       expect(editor.getText()).toBe "foo\n"
 
@@ -202,6 +198,30 @@ describe "Whitespace", ->
       editor.insertText "no trailing newline"
       editor.save()
       expect(editor.getText()).toBe "no trailing newline"
+
+  describe "when 'whitespace.removeTrailingNewlines' is true", ->
+    beforeEach ->
+      atom.config.set("whitespace.removeTrailingNewlines", true)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", false)
+
+    it "removes extra trailing newlines", ->
+      editor.insertText "foo\n\n\n\n"
+      editor.save()
+      expect(editor.getText()).toBe "foo"
+
+    it "leaves an empty buffer untouched", ->
+      editor.insertText ""
+      editor.save()
+      expect(editor.getText()).toBe ""
+
+  describe "when 'whitespace.removeTrailingNewlines' is false", ->
+    beforeEach ->
+      atom.config.set("whitespace.removeTrailingNewlines", false)
+
+    it "does not remove trailing newlines if removeTrailingNewlines is false", ->
+      editor.insertText "keep trailing newlines\n\n\n"
+      editor.save()
+      expect(editor.getText()).toBe "keep trailing newlines\n\n\n"
 
   describe "GFM whitespace trimming", ->
     describe 'when keepMarkdownLineBreakWhitespace is true', ->
