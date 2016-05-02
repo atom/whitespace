@@ -206,6 +206,7 @@ describe "Whitespace", ->
   describe "GFM whitespace trimming", ->
     describe 'when keepMarkdownLineBreakWhitespace is true', ->
       beforeEach ->
+        atom.config.set("whitespace.removeTrailingWhitespace", true)
         atom.config.set("whitespace.ignoreWhitespaceOnCurrentLine", false)
         atom.config.set("whitespace.keepMarkdownLineBreakWhitespace", true)
 
