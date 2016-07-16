@@ -93,9 +93,13 @@ class Whitespace
     buffer.transact ->
       buffer.scan /\t/g, ({replace}) -> replace(spacesText)
 
+    editor.setSoftTabs(true)
+
   convertSpacesToTabs: (editor) ->
     buffer = editor.getBuffer()
     spacesText = new Array(editor.getTabLength() + 1).join(' ')
 
     buffer.transact ->
       buffer.scan new RegExp(spacesText, 'g'), ({replace}) -> replace('\t')
+
+    editor.setSoftTabs(false)
