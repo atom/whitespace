@@ -372,14 +372,20 @@ describe "Whitespace", ->
       buffer.setText("     a\n   \nb   \nc      d")
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
       expect(buffer.getText()).toBe '\t  a\n\t\nb   \nc      d'
-    
+
+    it "handles mixed runs of tabs and spaces correctly", ->
+      editor.setTabLength(4)
+      buffer.setText("     \t    \t\ta   ")
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
+      expect(buffer.getText()).toBe "\t\t\t\t\ta   "
+
     it "replaces all space characters with hard tabs when convertLeadingSpacesOnly is disabled", ->
       atom.config.set 'whitespace.convertLeadingSpacesOnly', false
       editor.setTabLength(2)
       buffer.setText("   a\n  \nb  \nc    d")
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
       expect(buffer.getText()).toBe '\t a\n\t\nb\t\nc\t\td'
-      
+
       editor.setTabLength(3)
       buffer.setText("     a\n   \nb   \nc      d")
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')

@@ -89,7 +89,7 @@ class Whitespace
   convertTabsToSpaces: (editor) ->
     buffer = editor.getBuffer()
     spacesText = new Array(editor.getTabLength() + 1).join(' ')
-	
+
     buffer.transact ->
       buffer.scan /\t/g, ({replace}) -> replace(spacesText)
 
@@ -100,18 +100,16 @@ class Whitespace
     scope = editor.getRootScopeDescriptor()
     fileTabSize = editor.getTabLength()
     userTabSize = atom.config.get 'editor.tabLength', {scope}
+    regex = new RegExp ' '.repeat(fileTabSize), 'g'
 
     if atom.config.get 'whitespace.convertLeadingSpacesOnly', {scope}
-      regex = new RegExp '^(?: {' + fileTabSize + '})+', 'g'
-      iterator = ({matchText, replace}) ->
-        replace '\t'.repeat(matchText.length / fileTabSize)
+      buffer.transact ->
+        buffer.scan /^[ \t]+/g, ({matchText, replace}) ->
+          replace matchText.replace(regex, "\t").replace(/[ ]+\t/g, "\t")
 
     else
-      regex = new RegExp ' '.repeat(fileTabSize), 'g'
-      iterator = ({replace}) -> replace('\t')
-
-    buffer.transact ->
-      buffer.scan regex, iterator
+      buffer.transact ->
+        buffer.scan regex, ({replace}) -> replace('\t')
 
     editor.setSoftTabs(false)
     editor.setTabLength(userTabSize) unless fileTabSize is userTabSize
