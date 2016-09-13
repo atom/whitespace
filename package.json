@@ -38,11 +38,6 @@
       "default": false,
       "description": "Skip removing trailing whitespace on lines which consist only of whitespace characters. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`."
     },
-    "convertLeadingSpacesOnly": {
-      "type": "boolean",
-      "default": true,
-      "description": "When converting spaces to tabs, only convert spaces used before a non-whitespace character."
-    },
     "ensureSingleTrailingNewline": {
       "type": "boolean",
       "default": true,

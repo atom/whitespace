@@ -17,6 +17,9 @@ class Whitespace
       'whitespace:convert-spaces-to-tabs': =>
         if editor = atom.workspace.getActiveTextEditor()
           @convertSpacesToTabs(editor)
+      'whitespace:convert-all-spaces-to-tabs': =>
+        if editor = atom.workspace.getActiveTextEditor()
+          @convertSpacesToTabs(editor, true)
 
   destroy: ->
     @subscriptions.dispose()
@@ -95,14 +98,14 @@ class Whitespace
 
     editor.setSoftTabs(true)
 
-  convertSpacesToTabs: (editor) ->
+  convertSpacesToTabs: (editor, convertAllSpaces) ->
     buffer = editor.getBuffer()
     scope = editor.getRootScopeDescriptor()
     fileTabSize = editor.getTabLength()
     userTabSize = atom.config.get 'editor.tabLength', {scope}
     regex = new RegExp ' '.repeat(fileTabSize), 'g'
 
-    if atom.config.get 'whitespace.convertLeadingSpacesOnly', {scope}
+    unless convertAllSpaces
       buffer.transact ->
         buffer.scan /^[ \t]+/g, ({matchText, replace}) ->
           replace matchText.replace(regex, "\t").replace(/[ ]+\t/g, "\t")
