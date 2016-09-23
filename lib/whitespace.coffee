@@ -17,9 +17,9 @@ class Whitespace
       'whitespace:convert-spaces-to-tabs': =>
         if editor = atom.workspace.getActiveTextEditor()
           @convertSpacesToTabs(editor)
-      'whitespace:convert-all-spaces-to-tabs': =>
+      'whitespace:convert-all-tabs-to-spaces': =>
         if editor = atom.workspace.getActiveTextEditor()
-          @convertSpacesToTabs(editor, true)
+          @convertTabsToSpaces(editor, true)
 
   destroy: ->
     @subscriptions.dispose()
@@ -89,30 +89,26 @@ class Whitespace
       buffer.append('\n')
       editor.setSelectedBufferRanges(selectedBufferRanges)
 
-  convertTabsToSpaces: (editor) ->
+  convertTabsToSpaces: (editor, convertAllTabs) ->
     buffer = editor.getBuffer()
     spacesText = new Array(editor.getTabLength() + 1).join(' ')
+    regex = if convertAllTabs then /\t/g else /^\t+/g
 
     buffer.transact ->
-      buffer.scan /\t/g, ({replace}) -> replace(spacesText)
+      buffer.scan regex, ({replace}) -> replace(spacesText)
 
     editor.setSoftTabs(true)
 
-  convertSpacesToTabs: (editor, convertAllSpaces) ->
+  convertSpacesToTabs: (editor) ->
     buffer = editor.getBuffer()
     scope = editor.getRootScopeDescriptor()
     fileTabSize = editor.getTabLength()
     userTabSize = atom.config.get 'editor.tabLength', {scope}
     regex = new RegExp ' '.repeat(fileTabSize), 'g'
 
-    unless convertAllSpaces
-      buffer.transact ->
-        buffer.scan /^[ \t]+/g, ({matchText, replace}) ->
-          replace matchText.replace(regex, "\t").replace(/[ ]+\t/g, "\t")
-
-    else
-      buffer.transact ->
-        buffer.scan regex, ({replace}) -> replace('\t')
+    buffer.transact ->
+      buffer.scan /^[ \t]+/g, ({matchText, replace}) ->
+        replace matchText.replace(regex, "\t").replace(/[ ]+\t/g, "\t")
 
     editor.setSoftTabs(false)
     editor.setTabLength(userTabSize) unless fileTabSize is userTabSize

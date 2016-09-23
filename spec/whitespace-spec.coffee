@@ -346,16 +346,16 @@ describe "Whitespace", ->
       expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
 
   describe "when the 'whitespace:convert-tabs-to-spaces' command is run", ->
-    it "removes all \t characters and replaces them with spaces using the configured tab length", ->
+    it "removes leading \\t characters and replaces them with spaces using the configured tab length", ->
       editor.setTabLength(2)
       buffer.setText('\ta\n\t\nb\t\nc\t\td')
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
-      expect(buffer.getText()).toBe "  a\n  \nb  \nc    d"
+      expect(buffer.getText()).toBe "  a\n  \nb\t\nc\t\td"
 
       editor.setTabLength(3)
       buffer.setText('\ta\n\t\nb\t\nc\t\td')
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
-      expect(buffer.getText()).toBe "   a\n   \nb   \nc      d"
+      expect(buffer.getText()).toBe "   a\n   \nb\t\nc\t\td"
 
     it "changes the tab type to soft tabs", ->
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-tabs-to-spaces')
@@ -389,35 +389,18 @@ describe "Whitespace", ->
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-spaces-to-tabs')
       expect(editor.getTabLength()).toBe 2
 
-  describe "when the 'whitespace:convert-all-spaces-to-tabs' command is run", ->
-    it "replaces all space characters with hard tabs", ->
+  describe "when the 'whitespace:convert-all-tabs-to-spaces' command is run", ->
+    it "removes all \\t characters and replaces them with spaces using the configured tab length", ->
       editor.setTabLength(2)
-      buffer.setText("   a\n  \nb  \nc    d")
-      atom.commands.dispatch(workspaceElement, 'whitespace:convert-all-spaces-to-tabs')
-      expect(buffer.getText()).toBe '\t a\n\t\nb\t\nc\t\td'
+      buffer.setText('\ta\n\t\nb\t\nc\t\td')
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-all-tabs-to-spaces')
+      expect(buffer.getText()).toBe "  a\n  \nb  \nc    d"
 
       editor.setTabLength(3)
-      buffer.setText("     a\n   \nb   \nc      d")
-      atom.commands.dispatch(workspaceElement, 'whitespace:convert-all-spaces-to-tabs')
-      expect(buffer.getText()).toBe '\t  a\n\t\nb\t\nc\t\td'
+      buffer.setText('\ta\n\t\nb\t\nc\t\td')
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-all-tabs-to-spaces')
+      expect(buffer.getText()).toBe "   a\n   \nb   \nc      d"
 
-    it "handles mixed runs of tabs and spaces correctly", ->
-      editor.setTabLength(4)
-      buffer.setText("     \t    \t\ta   ")
-      atom.commands.dispatch(workspaceElement, 'whitespace:convert-all-spaces-to-tabs')
-      expect(buffer.getText()).toBe "\t \t\t\t\ta   "
-
-      editor.setTabLength(3)
-      buffer.setText("     \t   \t\ta    ")
-      atom.commands.dispatch(workspaceElement, 'whitespace:convert-all-spaces-to-tabs')
-      expect(buffer.getText()).toBe "\t  \t\t\t\ta\t "
-
-    it "changes the tab type to hard tabs", ->
-      atom.commands.dispatch(workspaceElement, 'whitespace:convert-all-spaces-to-tabs')
-      expect(editor.getSoftTabs()).toBe false
-
-    it "changes the tab length to user's tab-size", ->
-      editor.setTabLength(4)
-      buffer.setText("    ")
-      atom.commands.dispatch(workspaceElement, 'whitespace:convert-all-spaces-to-tabs')
-      expect(editor.getTabLength()).toBe 2
+    it "changes the tab type to soft tabs", ->
+      atom.commands.dispatch(workspaceElement, 'whitespace:convert-all-tabs-to-spaces')
+      expect(editor.getSoftTabs()).toBe true
