@@ -203,6 +203,41 @@ describe "Whitespace", ->
       editor.save()
       expect(editor.getText()).toBe "no trailing newline"
 
+  describe "when 'whitespace.ensureNoDuplicateBlankLines' is true", ->
+    beforeEach ->
+      atom.config.set("whitespace.ensureNoDuplicateBlankLines", true)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", false)
+
+    it "removes extra blank lines when there are more than one", ->
+      editor.insertText "foo\n\n\nfoo"
+      editor.save()
+      expect(editor.getText()).toBe "foo\n\nfoo"
+
+    it "removes extra blank lines even when they have whitespace", ->
+      editor.insertText "foo \n  \n  \nfoo"
+      editor.save()
+      expect(editor.getText()).toBe "foo\n\nfoo"
+
+    it "leaves an empty buffer untouched", ->
+      editor.insertText ""
+      editor.save()
+      expect(editor.getText()).toBe ""
+
+    it "leaves a buffer that is a single newline untouched", ->
+      editor.insertText "\n"
+      editor.save()
+      expect(editor.getText()).toBe "\n"
+
+  describe "when 'whitespace.ensureNoDuplicateBlankLines' is false", ->
+    beforeEach ->
+      atom.config.set("whitespace.ensureNoDuplicateBlankLines", false)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", false)
+
+    it "does not remove duplicate blank lines if ensureNoDuplicateBlankLines is false", ->
+      editor.insertText "a\n\n\n\n\nb"
+      editor.save()
+      expect(editor.getText()).toBe "a\n\n\n\n\nb"
+
   describe "GFM whitespace trimming", ->
     describe 'when keepMarkdownLineBreakWhitespace is true', ->
       beforeEach ->
