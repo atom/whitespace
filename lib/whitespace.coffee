@@ -30,6 +30,8 @@ class Whitespace
           @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
         if atom.config.get('whitespace.ensureSingleTrailingNewline', scope: scopeDescriptor)
           @ensureSingleTrailingNewline(editor)
+        if atom.config.get('whitespace.ensureNoDuplicateBlankLines', scope: scopeDescriptor)
+          @ensureNoDuplicateBlankLines(editor)
 
     editorTextInsertedSubscription = editor.onDidInsertText (event) ->
       return unless event.text is '\n'
@@ -103,3 +105,8 @@ class Whitespace
       buffer.scan new RegExp(spacesText, 'g'), ({replace}) -> replace('\t')
 
     editor.setSoftTabs(false)
+
+  ensureNoDuplicateBlankLines: (editor) ->
+    buffer = editor.getBuffer()
+
+    buffer.scan /((\r\n\s*|\n\s*|\r\s*)$){2,}/gm, ({replace}) -> replace('\n')

@@ -43,6 +43,11 @@
       "type": "boolean",
       "default": true,
       "description": "If the buffer doesn't end with a newline character when it's saved, then append one. If it ends with more than one newline, remove all but one. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`."
+    },
+    "ensureNoDuplicateBlankLines": {
+      "type": "boolean",
+      "default": false,
+      "description": "When the buffer is saved, it removes blank lines where there are more than 1 consecutively. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`."
     }
   }
 }
