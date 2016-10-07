@@ -345,6 +345,28 @@ describe "Whitespace", ->
       atom.packages.deactivatePackage 'whitespace'
       expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
 
+  describe "when the 'whitespace:save-with-trailing-whitespace' command is run", ->
+    beforeEach ->
+      atom.config.set("whitespace.removeTrailingWhitespace", true)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", false)
+      buffer.setText("foo   \nbar\t   \n\nbaz")
+
+    it "saves the file without removing any trailing whitespace", ->
+      atom.commands.dispatch(workspaceElement, 'whitespace:save-with-trailing-whitespace')
+      expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
+      expect(buffer.isModified()).toBe false
+
+  describe "when the 'whitespace:save-without-trailing-whitespace' command is run", ->
+    beforeEach ->
+      atom.config.set("whitespace.removeTrailingWhitespace", false)
+      atom.config.set("whitespace.ensureSingleTrailingNewline", false)
+      buffer.setText("foo   \nbar\t   \n\nbaz")
+
+    it "saves the file and removes any trailing whitespace", ->
+      atom.commands.dispatch(workspaceElement, 'whitespace:save-without-trailing-whitespace')
+      expect(buffer.getText()).toBe "foo\nbar\n\nbaz"
+      expect(buffer.isModified()).toBe false
+
   describe "when the 'whitespace:convert-tabs-to-spaces' command is run", ->
     it "removes leading \\t characters and replaces them with spaces using the configured tab length", ->
       editor.setTabLength(2)

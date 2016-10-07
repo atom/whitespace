@@ -11,6 +11,15 @@ class Whitespace
       'whitespace:remove-trailing-whitespace': =>
         if editor = atom.workspace.getActiveTextEditor()
           @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
+      'whitespace:save-with-trailing-whitespace': =>
+        if editor = atom.workspace.getActiveTextEditor()
+          @ignore = true
+          editor.save()
+          @ignore = false
+      'whitespace:save-without-trailing-whitespace': =>
+        if editor = atom.workspace.getActiveTextEditor()
+          @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
+          editor.save()
       'whitespace:convert-tabs-to-spaces': =>
         if editor = atom.workspace.getActiveTextEditor()
           @convertTabsToSpaces(editor)
@@ -29,7 +38,7 @@ class Whitespace
     bufferSavedSubscription = buffer.onWillSave =>
       buffer.transact =>
         scopeDescriptor = editor.getRootScopeDescriptor()
-        if atom.config.get('whitespace.removeTrailingWhitespace', scope: scopeDescriptor)
+        if atom.config.get('whitespace.removeTrailingWhitespace', scope: scopeDescriptor) and not @ignore
           @removeTrailingWhitespace(editor, editor.getGrammar().scopeName)
         if atom.config.get('whitespace.ensureSingleTrailingNewline', scope: scopeDescriptor)
           @ensureSingleTrailingNewline(editor)
