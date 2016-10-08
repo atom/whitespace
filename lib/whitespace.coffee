@@ -48,9 +48,10 @@ class Whitespace
       return unless buffer.isRowBlank(event.range.start.row)
 
       scopeDescriptor = editor.getRootScopeDescriptor()
-      if atom.config.get('whitespace.removeTrailingWhitespace', scope: scopeDescriptor)
-        unless atom.config.get('whitespace.ignoreWhitespaceOnlyLines', scope: scopeDescriptor)
-          editor.setIndentationForBufferRow(event.range.start.row, 0)
+      if atom.config.get('whitespace.removeTrailingWhitespace', scope: scopeDescriptor) and
+        atom.config.get('whitespace.removeTrailingWhitespaceAsYouType', scope: scopeDescriptor)
+          unless atom.config.get('whitespace.ignoreWhitespaceOnlyLines', scope: scopeDescriptor)
+            editor.setIndentationForBufferRow(event.range.start.row, 0)
 
     editorDestroyedSubscription = editor.onDidDestroy =>
       bufferSavedSubscription.dispose()
