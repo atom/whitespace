@@ -8,10 +8,37 @@
   "engines": {
     "atom": "*"
   },
+  "scripts": {
+    "lint": "standard"
+  },
   "devDependencies": {
+    "babel-eslint": "^7.0.0",
     "coffeelint": "^1.9.7",
     "fs-plus": "2.x",
+    "standard": "^8.4.0",
     "temp": "~0.8.1"
+  },
+  "standard": {
+    "ignore": [],
+    "parser": "babel-eslint",
+    "globals": [
+      "atom",
+      "afterEach",
+      "beforeEach",
+      "describe",
+      "fdescribe",
+      "xdescribe",
+      "expect",
+      "it",
+      "fit",
+      "xit",
+      "jasmine",
+      "runs",
+      "spyOn",
+      "waits",
+      "waitsFor",
+      "waitsForPromise"
+    ]
   },
   "configSchema": {
     "removeTrailingWhitespace": {
