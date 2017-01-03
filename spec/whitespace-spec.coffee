@@ -26,11 +26,6 @@ describe "Whitespace", ->
     beforeEach ->
       editor.destroy()
 
-    it "unsubscribes from the buffer", ->
-      buffer.setText("foo   \nbar\t   \n\nbaz")
-      buffer.save()
-      expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
-
     it "does not leak subscriptions", ->
       {whitespace} = atom.packages.getActivePackage('whitespace').mainModule
       expect(whitespace.subscriptions.disposables.size).toBe 2
