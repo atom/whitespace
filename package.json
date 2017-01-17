@@ -45,7 +45,16 @@
       "type": "boolean",
       "default": true,
       "scopes": {
+        ".source.diff": {
+          "default": false
+        },
         ".source.jade": {
+          "default": false
+        },
+        ".source.patch": {
+          "default": false
+        },
+        ".source.pug": {
           "default": false
         }
       },

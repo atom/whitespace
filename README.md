@@ -13,4 +13,4 @@ To disable/enable features for a certain language package, you can use syntax-sc
 
 You find the `scope` on top of a grammar package's settings view.
 
-Note: for `.source.jade` removing trailing whitespace is disabled by default.
+Note: for `.source.jade`, `.source.diff`, `.source.pug` and `.source.patch`, removing trailing whitespace is disabled by default.
