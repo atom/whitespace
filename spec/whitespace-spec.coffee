@@ -347,9 +347,12 @@ describe "Whitespace", ->
       buffer.setText("foo   \nbar\t   \n\nbaz")
 
     it "saves the file without removing any trailing whitespace", ->
-      atom.commands.dispatch(workspaceElement, 'whitespace:save-with-trailing-whitespace')
-      expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
-      expect(buffer.isModified()).toBe false
+      waitsFor (done) ->
+        buffer.onDidSave ->
+          expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
+          expect(buffer.isModified()).toBe false
+          done()
+        atom.commands.dispatch(workspaceElement, 'whitespace:save-with-trailing-whitespace')
 
   describe "when the 'whitespace:save-without-trailing-whitespace' command is run", ->
     beforeEach ->
@@ -358,9 +361,12 @@ describe "Whitespace", ->
       buffer.setText("foo   \nbar\t   \n\nbaz")
 
     it "saves the file and removes any trailing whitespace", ->
-      atom.commands.dispatch(workspaceElement, 'whitespace:save-without-trailing-whitespace')
-      expect(buffer.getText()).toBe "foo\nbar\n\nbaz"
-      expect(buffer.isModified()).toBe false
+      waitsFor (done) ->
+        buffer.onDidSave ->
+          expect(buffer.getText()).toBe "foo\nbar\n\nbaz"
+          expect(buffer.isModified()).toBe false
+          done()
+        atom.commands.dispatch(workspaceElement, 'whitespace:save-without-trailing-whitespace')
 
   describe "when the 'whitespace:convert-tabs-to-spaces' command is run", ->
     it "removes leading \\t characters and replaces them with spaces using the configured tab length", ->
