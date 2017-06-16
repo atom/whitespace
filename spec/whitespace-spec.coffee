@@ -57,6 +57,11 @@ describe "Whitespace", ->
         editor.save()
         expect(editor.getText()).toBe 'Some text.\n'
 
+    it "works for files with CRLF line endings", ->
+      editor.insertText("foo   \r\nbar\t   \r\n\r\nbaz\r\n")
+      editor.save()
+      expect(editor.getText()).toBe "foo\r\nbar\r\n\r\nbaz\r\n"
+
     it "clears blank lines when the editor inserts a newline", ->
       # Need autoIndent to be true
       atom.config.set 'editor.autoIndent', true
