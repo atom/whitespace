@@ -40,6 +40,13 @@
       "waitsForPromise"
     ]
   },
+  "consumedServices": {
+    "whitespace.suppressor": {
+      "versions": {
+        "^1.0.0": "consumeSuppressor"
+      }
+    }
+  },
   "configSchema": {
     "removeTrailingWhitespace": {
       "type": "boolean",
