@@ -30,8 +30,10 @@ describe "Whitespace", ->
       {whitespace} = atom.packages.getActivePackage('whitespace').mainModule
       expect(whitespace.subscriptions.disposables.size).toBe 2
 
-      atom.packages.deactivatePackage('whitespace')
-      expect(whitespace.subscriptions.disposables).toBeNull()
+      waitsForPromise ->
+        Promise.resolve(atom.packages.deactivatePackage('whitespace'))
+      runs ->
+        expect(whitespace.subscriptions.disposables).toBeNull()
 
   describe "when 'whitespace.removeTrailingWhitespace' is true", ->
     beforeEach ->
@@ -318,11 +320,14 @@ describe "Whitespace", ->
   describe "when deactivated", ->
     it "does not remove trailing whitespace from editors opened after deactivation", ->
       atom.config.set("whitespace.removeTrailingWhitespace", true)
-      atom.packages.deactivatePackage('whitespace')
 
-      editor.setText("foo \n")
-      editor.save()
-      expect(editor.getText()).toBe "foo \n"
+      waitsForPromise ->
+        Promise.resolve(atom.packages.deactivatePackage('whitespace'))
+
+      runs ->
+        editor.setText("foo \n")
+        editor.save()
+        expect(editor.getText()).toBe "foo \n"
 
       waitsForPromise ->
         atom.workspace.open('sample2.txt')
@@ -342,8 +347,10 @@ describe "Whitespace", ->
       expect(buffer.getText()).toBe "foo\nbar\n\nbaz"
 
     it "does not attempt to remove whitespace when the package is deactivated", ->
-      atom.packages.deactivatePackage 'whitespace'
-      expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
+      waitsForPromise ->
+        Promise.resolve(atom.packages.deactivatePackage 'whitespace')
+      runs ->
+        expect(buffer.getText()).toBe "foo   \nbar\t   \n\nbaz"
 
   describe "when the 'whitespace:save-with-trailing-whitespace' command is run", ->
     beforeEach ->
