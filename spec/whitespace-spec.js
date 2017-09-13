@@ -26,7 +26,7 @@ describe('Whitespace', () => {
       const {whitespace} = atom.packages.getActivePackage('whitespace').mainModule
       expect(whitespace.subscriptions.disposables.size).toBe(2)
 
-      atom.packages.deactivatePackage('whitespace')
+      await atom.packages.deactivatePackage('whitespace')
       expect(whitespace.subscriptions.disposables).toBeNull()
     })
   })
@@ -347,7 +347,7 @@ describe('Whitespace', () => {
   describe('when deactivated', () =>
     it('does not remove trailing whitespace from editors opened after deactivation', async () => {
       atom.config.set('whitespace.removeTrailingWhitespace', true)
-      atom.packages.deactivatePackage('whitespace')
+      await atom.packages.deactivatePackage('whitespace')
 
       editor.setText('foo \n')
       await editor.save()
@@ -371,7 +371,7 @@ describe('Whitespace', () => {
     })
 
     it('does not attempt to remove whitespace when the package is deactivated', () => {
-      atom.packages.deactivatePackage('whitespace')
+      await atom.packages.deactivatePackage('whitespace')
       expect(buffer.getText()).toBe('foo   \nbar\t   \n\nbaz')
     })
   })
