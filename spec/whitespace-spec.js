@@ -22,7 +22,7 @@ describe('Whitespace', () => {
   describe('when the editor is destroyed', () => {
     beforeEach(() => editor.destroy())
 
-    it('does not leak subscriptions', () => {
+    it('does not leak subscriptions', async () => {
       const {whitespace} = atom.packages.getActivePackage('whitespace').mainModule
       expect(whitespace.subscriptions.disposables.size).toBe(2)
 
@@ -370,7 +370,7 @@ describe('Whitespace', () => {
       expect(buffer.getText()).toBe('foo\nbar\n\nbaz')
     })
 
-    it('does not attempt to remove whitespace when the package is deactivated', () => {
+    it('does not attempt to remove whitespace when the package is deactivated', async () => {
       await atom.packages.deactivatePackage('whitespace')
       expect(buffer.getText()).toBe('foo   \nbar\t   \n\nbaz')
     })
