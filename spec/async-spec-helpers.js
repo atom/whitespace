@@ -1,46 +1,36 @@
-;['beforeEach', 'afterEach'].forEach((name) => {
-  const originalFunction = global[name]
-  global[name] = function (fn) {
-    originalFunction(() => {
-      const result = fn()
-      if (result instanceof Promise) {
-        waitsForPromise(() => result)
-      }
-    })
-  }
-})
-
-;['it', 'fit', 'ffit', 'fffit'].forEach((name) => {
-  const originalFunction = global[name]
-  global[name] = function (description, fn) {
-    originalFunction(description, () => {
-      const result = fn()
-      if (result instanceof Promise) {
-        waitsForPromise(() => result)
-      }
-    })
-  }
-})
-
-exports.timeoutPromise = function timeoutPromise (timeout) {
-  return new Promise((resolve) => global.setTimeout(resolve, timeout))
+exports.beforeEach = function beforeEach (fn) {
+  global.beforeEach(function () {
+    const result = fn()
+    if (result instanceof Promise) {
+      waitsForPromise(() => result)
+    }
+  })
 }
 
-exports.conditionPromise = async function conditionPromise (condition) {
-  const startTime = Date.now()
+exports.afterEach = function afterEach (fn) {
+  global.afterEach(function () {
+    const result = fn()
+    if (result instanceof Promise) {
+      waitsForPromise(() => result)
+    }
+  })
+}
 
-  while (true) {
-    await exports.timeoutPromise(100)
-
-    if (await condition()) {
+;['it', 'fit', 'ffit', 'fffit'].forEach(function (name) {
+  exports[name] = function (description, fn) {
+    if (fn === undefined) {
+      global[name](description)
       return
     }
 
-    if (Date.now() - startTime > 5000) {
-      throw new Error('Timed out waiting on condition')
-    }
+    global[name](description, function () {
+      const result = fn()
+      if (result instanceof Promise) {
+        waitsForPromise(() => result)
+      }
+    })
   }
-}
+})
 
 function waitsForPromise (fn) {
   const promise = fn()

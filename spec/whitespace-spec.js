@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs-plus')
 const temp = require('temp')
-require('./async-spec-helpers')
+const {it, fit, ffit, beforeEach} = require('./async-spec-helpers') // eslint-disable-line
 
 describe('Whitespace', () => {
   let editor, buffer, workspaceElement
