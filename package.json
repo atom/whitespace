@@ -12,7 +12,6 @@
     "lint": "standard"
   },
   "devDependencies": {
-    "babel-eslint": "^7.0.0",
     "coffeelint": "^1.9.7",
     "fs-plus": "2.x",
     "standard": "^8.4.0",
@@ -20,7 +19,6 @@
   },
   "standard": {
     "ignore": [],
-    "parser": "babel-eslint",
     "globals": [
       "atom",
       "afterEach",
