@@ -60,7 +60,8 @@ describe('Whitespace', () => {
 
     it('clears blank lines when the editor inserts a newline', () => {
       // Need autoIndent to be true
-      atom.config.set('editor.autoIndent', true)
+      editor.update({autoIndent: true})
+
       // Create an indent level and insert a newline
       editor.setIndentationForBufferRow(0, 1)
       editor.insertText('\n')
