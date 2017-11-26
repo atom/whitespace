@@ -15,7 +15,8 @@
     "coffeelint": "^1.9.7",
     "fs-plus": "2.x",
     "standard": "^8.4.0",
-    "temp": "~0.8.1"
+    "temp": "~0.8.1",
+    "underscore-plus": "^1.6.6"
   },
   "standard": {
     "ignore": [],
@@ -72,6 +73,11 @@
       "type": "boolean",
       "default": false,
       "description": "Skip removing trailing whitespace on lines which consist only of whitespace characters. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`."
+    },
+    "onlyModifiedLines": {
+      "type": "boolean",
+      "default": true,
+      "description": "Removing trailing whitespace on only lines that are modified. Only applicable to files in Git projects"
     },
     "ensureSingleTrailingNewline": {
       "type": "boolean",
