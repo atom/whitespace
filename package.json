@@ -1,6 +1,6 @@
 {
   "name": "whitespace",
-  "version": "0.37.2",
+  "version": "0.37.5",
   "main": "./lib/main",
   "description": "Strips trailing whitespace and adds a trailing newline when an editor is saved.",
   "repository": "https://github.com/atom/whitespace",
@@ -12,7 +12,6 @@
     "lint": "standard"
   },
   "devDependencies": {
-    "babel-eslint": "^7.0.0",
     "coffeelint": "^1.9.7",
     "fs-plus": "2.x",
     "standard": "^8.4.0",
@@ -20,7 +19,6 @@
   },
   "standard": {
     "ignore": [],
-    "parser": "babel-eslint",
     "globals": [
       "atom",
       "afterEach",
