@@ -495,7 +495,7 @@ describe('Whitespace', () => {
       const dotGit = path.join(projectPath, '.git')
       fs.copySync(dotGitFixture, dotGit)
 
-      const contents = fs.readFileSync(path.join(workingDir, 'sample.js')).toString();
+      const contents = fs.readFileSync(path.join(workingDir, 'sample.js')).toString()
       const sampleFile = path.join(projectPath, 'sample.js')
       fs.writeFileSync(sampleFile, contents)
 
@@ -504,22 +504,27 @@ describe('Whitespace', () => {
       atom.config.set('whitespace.onlyModifiedLines', true)
     })
 
+    it('loads file without trimming anything', () => {
+      const contents = editor.getText()
+      expect(contents).toMatch(/^      $/m)
+    })
+
     it('trims whitespace if and only if the line is touched', async () => {
-      const contents = editor.getText();
+      const contents = editor.getText()
       editor.moveDown(2)
-      editor.moveToEndOfLine();
+      editor.moveToEndOfLine()
       editor.insertText('  ')
-      editor.moveDown(1);
+      editor.moveDown(1)
       await editor.save()
       expect(editor.getText()).toBe(contents)
     })
 
     it('trims whitespace on touched line that is full of whitespace', async () => {
-      const contents = editor.getText();
+      const contents = editor.getText()
       editor.moveDown(8)
-      editor.moveToEndOfLine();
+      editor.moveToEndOfLine()
       editor.insertText('  ')
-      editor.moveDown(1);
+      editor.moveDown(1)
       await editor.save()
       expect(editor.getText()).toBe(contents.replace(/^      $/m, ''))
     })
