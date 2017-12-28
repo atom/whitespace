@@ -485,4 +485,43 @@ describe('Whitespace', () => {
       expect(editor.getSoftTabs()).toBe(true)
     })
   })
+
+  describe("when the 'whitespace:onlyModifiedLines' command is run", () => {
+    beforeEach(async () => {
+      const workingDir = path.join(__dirname, 'fixtures', 'git', 'working-dir')
+      const dotGitFixture = path.join(workingDir, 'git.git')
+
+      const projectPath = temp.mkdirSync('whitespace-project')
+      const dotGit = path.join(projectPath, '.git')
+      fs.copySync(dotGitFixture, dotGit)
+
+      const contents = fs.readFileSync(path.join(workingDir, 'sample.js')).toString();
+      const sampleFile = path.join(projectPath, 'sample.js')
+      fs.writeFileSync(sampleFile, contents)
+
+      atom.project.setPaths([projectPath])
+      editor = await atom.workspace.open(sampleFile)
+      atom.config.set('whitespace.onlyModifiedLines', true)
+    })
+
+    it('trims whitespace if and only if the line is touched', async () => {
+      const contents = editor.getText();
+      editor.moveDown(2)
+      editor.moveToEndOfLine();
+      editor.insertText('  ')
+      editor.moveDown(1);
+      await editor.save()
+      expect(editor.getText()).toBe(contents)
+    })
+
+    it('trims whitespace on touched line that is full of whitespace', async () => {
+      const contents = editor.getText();
+      editor.moveDown(8)
+      editor.moveToEndOfLine();
+      editor.insertText('  ')
+      editor.moveDown(1);
+      await editor.save()
+      expect(editor.getText()).toBe(contents.replace(/^      $/m, ''))
+    })
+  })
 })
