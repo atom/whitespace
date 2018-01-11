@@ -109,12 +109,55 @@ describe('Whitespace', () => {
   describe("when 'whitespace.ignoreWhitespaceOnCurrentLine' is true", () => {
     beforeEach(() => atom.config.set('whitespace.ignoreWhitespaceOnCurrentLine', true))
 
-    it('removes the whitespace from all lines, excluding the current lines', async () => {
-      editor.insertText('1  \n2  \n3  \n')
-      editor.setCursorBufferPosition([1, 3])
-      editor.addCursorAtBufferPosition([2, 3])
-      await editor.save()
-      expect(editor.getText()).toBe('1\n2  \n3  \n')
+    describe("respects multiple cursors", () => {
+      it("removes the whitespace from all lines, excluding the current lines", async () => {
+        editor.insertText("1  \n2  \n3  \n")
+        editor.setCursorBufferPosition([1, 3])
+        editor.addCursorAtBufferPosition([2, 3])
+        await editor.save()
+        expect(editor.getText()).toBe("1\n2  \n3  \n")
+      })
+    })
+
+    describe("when buffer is opened in multiple editors", () => {
+      let editor2
+      beforeEach(async () => {
+        editor2 = atom.workspace.buildTextEditor({buffer: editor.buffer})
+        await atom.workspace.open(editor2)
+      })
+
+      it('[editor is activeEditor] remove WS with excluding active editor\'s cursor line', async () => {
+        editor.insertText('1  \n2  \n3  \n')
+        editor.setCursorBufferPosition([1, 3])
+        editor2.setCursorBufferPosition([2, 3])
+
+        atom.workspace.getActivePane().activateItem(editor)
+        expect(atom.workspace.getActiveTextEditor()).toBe(editor)
+        await editor.save()
+        expect(editor.getText()).toBe('1\n2  \n3\n')
+      })
+
+      it('[editor2 is activeEditor] remove WS with excluding active editor\'s cursor line', async () => {
+        editor.insertText('1  \n2  \n3  \n')
+        editor.setCursorBufferPosition([1, 3])
+        editor2.setCursorBufferPosition([2, 3])
+
+        atom.workspace.getActivePane().activateItem(editor2)
+        expect(atom.workspace.getActiveTextEditor()).toBe(editor2)
+        await editor2.save()
+        expect(editor.getText()).toBe('1\n2\n3  \n')
+      })
+
+      it('[either editor nor editor2 is activeEditor] remove WS but doesn\'t exclude cursor line for non active editor', async () => {
+        editor.insertText('1  \n2  \n3  \n')
+        editor.setCursorBufferPosition([1, 3])
+        editor2.setCursorBufferPosition([1, 3])
+
+        const editor3 = await atom.workspace.open()
+        expect(atom.workspace.getActiveTextEditor()).toBe(editor3)
+        await editor.save()
+        expect(editor.getText()).toBe('1\n2\n3\n') // all trainling-WS were removed
+      })
     })
   })
 
