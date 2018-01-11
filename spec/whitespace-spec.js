@@ -109,17 +109,17 @@ describe('Whitespace', () => {
   describe("when 'whitespace.ignoreWhitespaceOnCurrentLine' is true", () => {
     beforeEach(() => atom.config.set('whitespace.ignoreWhitespaceOnCurrentLine', true))
 
-    describe("respects multiple cursors", () => {
-      it("removes the whitespace from all lines, excluding the current lines", async () => {
-        editor.insertText("1  \n2  \n3  \n")
+    describe('respects multiple cursors', () => {
+      it('removes the whitespace from all lines, excluding the current lines', async () => {
+        editor.insertText('1  \n2  \n3  \n')
         editor.setCursorBufferPosition([1, 3])
         editor.addCursorAtBufferPosition([2, 3])
         await editor.save()
-        expect(editor.getText()).toBe("1\n2  \n3  \n")
+        expect(editor.getText()).toBe('1\n2  \n3  \n')
       })
     })
 
-    describe("when buffer is opened in multiple editors", () => {
+    describe('when buffer is opened in multiple editors', () => {
       let editor2
       beforeEach(async () => {
         editor2 = atom.workspace.buildTextEditor({buffer: editor.buffer})
