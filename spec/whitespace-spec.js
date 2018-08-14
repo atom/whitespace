@@ -2,6 +2,7 @@ const path = require('path')
 const fs = require('fs-plus')
 const temp = require('temp')
 const {it, fit, ffit, beforeEach} = require('./async-spec-helpers') // eslint-disable-line
+const {Point, Range} = require('atom')
 
 describe('Whitespace', () => {
   let editor, buffer, workspaceElement
@@ -526,6 +527,146 @@ describe('Whitespace', () => {
     it('changes the tab type to soft tabs', () => {
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-all-tabs-to-spaces')
       expect(editor.getSoftTabs()).toBe(true)
+    })
+  })
+  describe("when 'whitespace:flattenTabsAfterNonWhitespaceCharacter' option is enabled", () => {
+    beforeEach(() => { atom.config.set('whitespace.flattenTabsAfterNonWhitespaceCharacter', true) })
+    describe("when 'whitespace:removeTrailingWhitespace' option is enabled", () => {
+      beforeEach(() => {
+        atom.config.set('whitespace.removeTrailingWhitespace', true)
+        editor.setTabLength(2)
+      })
+      it("executes after 'whitespace.removeTrailingWhitespace'", async () => {
+        editor.setText('test\t  \tstring\t\t  \t\t\n')
+        await editor.save()
+        expect(editor.getText()).toBe('test      string\n')
+      })
+      it('flattens tabs after first non-whitespace character', async () => {
+        editor.setText('test\t \t \t \tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('test        string\n')
+      })
+      it('ignores leading whitespace before first non-whitespace character', async () => {
+        editor.setText('\t\t\t       \t\t\ttest\t \t \t \tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('\t\t\t       \t\t\ttest        string\n')
+      })
+      it('respects tab stops with tab length equal to 2', async () => {
+        editor.setTabLength(2)
+        editor.setText('test\tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('test  string\n')
+        editor.setText('test \tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('test  string\n')
+        editor.setText('test  \tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('test    string\n')
+      })
+      it('respects tab stops with tab length equal to 3', async () => {
+        editor.setTabLength(3)
+        editor.setText('tes\tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('tes   string\n')
+        editor.setText('tes \tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('tes   string\n')
+        editor.setText('tes  \tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('tes   string\n')
+        editor.setText('tes   \tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('tes      string\n')
+      })
+      it('respects tab stops with tab length equal to 4', async () => {
+        editor.setTabLength(4)
+        editor.setText('test\tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('test    string\n')
+        editor.setText('test \tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('test    string\n')
+        editor.setText('test  \tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('test    string\n')
+        editor.setText('test   \tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('test    string\n')
+        editor.setText('test    \tstring\n')
+        await editor.save()
+        expect(editor.getText()).toBe('test        string\n')
+      })
+      it('converts selection buffers correctly', async () => {
+        editor.setText('test\t \t \tstring\n')
+        editor.setSelectedBufferRanges([
+          new Range(new Point(0, 0), new Point(0, 5)),
+          new Range(new Point(0, 7), new Point(0, 11))
+        ])
+        await editor.save()
+        expect(editor.getSelectedBufferRanges()[0].start.row).toBe(0)
+        expect(editor.getSelectedBufferRanges()[0].start.column).toBe(0)
+        expect(editor.getSelectedBufferRanges()[0].end.row).toBe(0)
+        expect(editor.getSelectedBufferRanges()[0].end.column).toBe(6)
+        expect(editor.getSelectedBufferRanges()[1].start.row).toBe(0)
+        expect(editor.getSelectedBufferRanges()[1].start.column).toBe(8)
+        expect(editor.getSelectedBufferRanges()[1].end.row).toBe(0)
+        expect(editor.getSelectedBufferRanges()[1].end.column).toBe(12)
+      })
+    })
+    describe("when 'whitespace:removeTrailingWhitespace' option is disabled", () => {
+      beforeEach(() => {
+        atom.config.set('whitespace.removeTrailingWhitespace', false)
+        editor.setTabLength(2)
+      })
+      it('flatten trailing whitespace if non-whitespace character exists on line', async () => {
+        editor.setText('test\t\t \t\n')
+        await editor.save()
+        expect(editor.getText()).toBe('test      \n')
+      })
+      it('does not flatten trailing whitespace non-whitespace character is non-existant on line', async () => {
+        editor.setText('\t\t \t\n')
+        await editor.save()
+        expect(editor.getText()).toBe('\t\t \t\n')
+      })
+    })
+  })
+  describe("when 'whitespace:flattenTabsAfterNonWhitespaceCharacter' option is disabled", () => {
+    beforeEach(() => {
+      atom.config.set('whitespace.flattenTabsAfterNonWhitespaceCharacter', false)
+      editor.setTabLength(2)
+    })
+    it('does not execute on save', async () => {
+      editor.setText('test\t\t \tstring\n')
+      await editor.save()
+      expect(editor.getText()).toBe('test\t\t \tstring\n')
+    })
+    it("works when 'whitespace:flatten-tabs-after-non-whitespace-character' is dispached", () => {
+      buffer.setText('test\t \t string')
+      atom.commands.dispatch(workspaceElement, 'whitespace:flatten-tabs-after-non-whitespace-character')
+      expect(buffer.getText()).toBe('test     string\n')
+    })
+  })
+  describe("when 'whitespace:flatten-tabs-after-non-whitespace-character' command is dispached", () => {
+    beforeEach(() => {
+      atom.config.set('whitespace.flattenTabsAfterNonWhitespaceCharacter', true)
+      atom.config.set('whitespace.removeTrailingWhitespace', false)
+      atom.config.set('whitespace.ensureSingleTrailingNewline', false)
+      editor.setTabLength(2)
+    })
+    it('does flatten after non-whitespace character', () => {
+      buffer.setText('test\t \t string')
+      atom.commands.dispatch(workspaceElement, 'whitespace:flatten-tabs-after-non-whitespace-character')
+      expect(buffer.getText()).toBe('test     string\n')
+    })
+    it('does not effect leading whitespace', () => {
+      buffer.setText('\t \t\ttest\t \t string')
+      atom.commands.dispatch(workspaceElement, 'whitespace:flatten-tabs-after-non-whitespace-character')
+      expect(buffer.getText()).toBe('\t \t\ttest     string\n')
+    })
+    it('does flatten trailing whitespace', () => {
+      buffer.setText('\t \t\ttest\t \t string\t \t \t')
+      atom.commands.dispatch(workspaceElement, 'whitespace:flatten-tabs-after-non-whitespace-character')
+      expect(buffer.getText()).toBe('\t \t\ttest     string     \n')
     })
   })
 })

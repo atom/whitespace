@@ -77,6 +77,11 @@
       "type": "boolean",
       "default": true,
       "description": "If the buffer doesn't end with a newline character when it's saved, then append one. If it ends with more than one newline, remove all but one. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`."
+    },
+    "flattenTabsAfterNonWhitespaceCharacter": {
+      "type": "boolean",
+      "default": false,
+      "description": "After encountering a non-whitespace character on a line, convert all tabs there after to spaces whilst respecting tab-stops. Executed automatically on save when enabled. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`."
     }
   }
 }
