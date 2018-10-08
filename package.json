@@ -63,6 +63,11 @@
       "default": true,
       "description": "Markdown uses two or more spaces at the end of a line to signify a line break. Enable this option to keep this whitespace in Markdown files, even if other settings would remove it."
     },
+    "ignoreCommentLines": {
+      "type": "boolean",
+      "default": false,
+      "description": "Skip removing trailing whitespace on comment lines. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`."
+    },
     "ignoreWhitespaceOnCurrentLine": {
       "type": "boolean",
       "default": true,
