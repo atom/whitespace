@@ -65,7 +65,7 @@
     },
     "ignoreWhitespaceOnCurrentLine": {
       "type": "boolean",
-      "default": true,
+      "default": false,
       "description": "Skip removing trailing whitespace on the line which the cursor is positioned on when the buffer is saved. To disable/enable for a certain language, use [syntax-scoped properties](https://github.com/atom/whitespace#readme) in your `config.cson`."
     },
     "ignoreWhitespaceOnlyLines": {
