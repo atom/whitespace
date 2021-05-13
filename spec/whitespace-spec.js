@@ -57,30 +57,6 @@ describe('Whitespace', () => {
       await editor.save()
       expect(editor.getText()).toBe('foo\r\nbar\r\n\r\nbaz\r\n')
     })
-
-    it('clears blank lines when the editor inserts a newline', () => {
-      // Need autoIndent to be true
-      editor.update({autoIndent: true})
-
-      // Create an indent level and insert a newline
-      editor.setIndentationForBufferRow(0, 1)
-      editor.insertText('\n')
-      expect(editor.getText()).toBe('\n  ')
-
-      // Undo the newline insert and redo it
-      editor.undo()
-      expect(editor.getText()).toBe('  ')
-      editor.redo()
-      expect(editor.getText()).toBe('\n  ')
-
-      // Test for multiple cursors, possibly without blank lines
-      editor.insertText('foo')
-      editor.insertText('\n')
-      editor.setCursorBufferPosition([1, 5])    // Cursor after 'foo'
-      editor.addCursorAtBufferPosition([2, 2])  // Cursor on the next line (blank)
-      editor.insertText('\n')
-      expect(editor.getText()).toBe('\n  foo\n  \n\n  ')
-    })
   })
 
   describe("when 'whitespace.removeTrailingWhitespace' is false", () => {
@@ -526,6 +502,166 @@ describe('Whitespace', () => {
     it('changes the tab type to soft tabs', () => {
       atom.commands.dispatch(workspaceElement, 'whitespace:convert-all-tabs-to-spaces')
       expect(editor.getSoftTabs()).toBe(true)
+    })
+  })
+
+  describe("when 'whitespace.ensureNoBlankLinesLeft' is true", () => {
+    beforeEach(() => {
+      atom.config.set('whitespace.ensureNoBlankLinesLeft', true)
+      // Need autoIndent to be true
+      editor.update({ autoIndent: true })
+    })
+
+    it('clears blank lines when the editor inserts a newline', () => {
+      // Create an indent level and insert a newline
+      editor.setIndentationForBufferRow(0, 1)
+      editor.insertText('\n')
+      expect(editor.getText()).toBe('\n  ')
+
+      // Undo the newline insert and redo it
+      editor.undo()
+      expect(editor.getText()).toBe('  ')
+      editor.redo()
+      expect(editor.getText()).toBe('\n  ')
+
+      // Test for multiple cursors, possibly without blank lines
+      editor.insertText('foo')
+      editor.insertText('\n')
+      editor.setCursorBufferPosition([1, 5]) // Cursor after 'foo'
+      editor.addCursorAtBufferPosition([2, 2]) // Cursor on the next line (blank)
+      editor.insertText('\n')
+      expect(editor.getText()).toBe('\n  foo\n  \n\n  ')
+    })
+
+    // -------------------------------------------------------------------------
+    // One cursor, starting at begining of the line
+    it('keeps empty line empty when leaving it', () => {
+      editor.setText('')
+      editor.insertText('\n')
+      expect(editor.getText()).toBe('\n')
+
+      editor.undo()
+      expect(editor.getText()).toBe('')
+      editor.redo()
+      expect(editor.getText()).toBe('\n')
+
+      editor.setCursorBufferPosition([0, 0])
+      editor.insertText('1')
+      expect(editor.getText()).toBe('1\n')
+    })
+
+    // -------------------------------------------------------------------------
+    // One cursor, starting at two spaces and a character
+    it('removes trailing blanks where the cursor was', () => {
+      editor.setText('  l')
+      editor.insertText('\n')
+      expect(editor.getText()).toBe('  l\n  ')
+      editor.insertText('\n')
+      editor.insertText('\n')
+      expect(editor.getText()).toBe('  l\n\n\n  ')
+
+      editor.undo()
+      expect(editor.getText()).toBe('  l\n  ')
+      editor.redo()
+      expect(editor.getText()).toBe('  l\n\n\n  ')
+
+      editor.setCursorBufferPosition([0, 0])
+      editor.insertText('1')
+      expect(editor.getText()).toBe('1  l\n\n\n')
+    })
+
+    // -------------------------------------------------------------------------
+    // One cursor, starting at two spaces
+    it('removes trailing blanks where the cursor was', () => {
+      editor.setText('  ')
+      editor.insertText('\n')
+      expect(editor.getText()).toBe('\n  ')
+
+      editor.undo()
+      expect(editor.getText()).toBe('  ')
+      editor.redo()
+      expect(editor.getText()).toBe('\n  ')
+
+      editor.setCursorBufferPosition([0, 0])
+      editor.insertText('1')
+      expect(editor.getText()).toBe('1\n')
+    })
+
+    // -------------------------------------------------------------------------
+    // Two cursors, starting at begining of lines
+    it('keeps empty line empty when leaving it', () => {
+      editor.setText('\n')
+      editor.setCursorBufferPosition([0, 0])
+      editor.addCursorAtBufferPosition([1, 0])
+      editor.insertText('\n')
+      expect(editor.getText()).toBe('\n\n\n')
+
+      editor.undo()
+      expect(editor.getText()).toBe('\n')
+      editor.redo()
+      expect(editor.getText()).toBe('\n\n\n')
+
+      editor.setCursorBufferPosition([0, 0])
+      editor.insertText('1')
+      expect(editor.getText()).toBe('1\n\n\n')
+    })
+
+    // -------------------------------------------------------------------------
+    // Two cursors, first with spaces, second on begining of the line
+    it('removes trailing blanks where the cursors were', () => {
+      editor.setText('\n')
+      editor.setCursorBufferPosition([0, 0])
+      editor.insertText('  ')
+      editor.addCursorAtBufferPosition([1, 0])
+      editor.insertText('\n')
+      expect(editor.getText()).toBe('\n  \n\n')
+
+      editor.undo()
+      expect(editor.getText()).toBe('  \n')
+      editor.redo()
+      expect(editor.getText()).toBe('\n  \n\n')
+
+      editor.setCursorBufferPosition([0, 0])
+      editor.insertText('1')
+      expect(editor.getText()).toBe('1\n\n\n')
+    })
+
+    // -------------------------------------------------------------------------
+    // Two cursors, first on begining of the line, second with spaces
+    it('removes trailing blanks where the cursors were', () => {
+      editor.setText('\n  ')
+      editor.setCursorBufferPosition([0, 0])
+      editor.addCursorAtBufferPosition([1, 2])
+      editor.insertText('\n')
+      expect(editor.getText()).toBe('\n\n\n  ')
+
+      editor.undo()
+      expect(editor.getText()).toBe('\n  ')
+      editor.redo()
+      expect(editor.getText()).toBe('\n\n\n  ')
+
+      editor.setCursorBufferPosition([0, 0])
+      editor.insertText('1')
+      expect(editor.getText()).toBe('1\n\n\n')
+    })
+
+    // -------------------------------------------------------------------------
+    // Two cursors, all with spaces
+    it('removes trailing blanks where the cursors were', () => {
+      editor.setText('  \n  ')
+      editor.setCursorBufferPosition([0, 2])
+      editor.addCursorAtBufferPosition([1, 2])
+      editor.insertText('\n')
+      expect(editor.getText()).toBe('\n  \n\n  ')
+
+      editor.undo()
+      expect(editor.getText()).toBe('  \n  ')
+      editor.redo()
+      expect(editor.getText()).toBe('\n  \n\n  ')
+
+      editor.setCursorBufferPosition([0, 0])
+      editor.insertText('1')
+      expect(editor.getText()).toBe('1\n\n\n')
     })
   })
 })
