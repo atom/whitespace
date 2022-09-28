@@ -1,4 +1,5 @@
-# Whitespace package
+##### Atom and all repositories under Atom will be archived on December 15, 2022. Learn more in our [official announcement](https://github.blog/2022-06-08-sunsetting-atom/)
+ # Whitespace package
 [![OS X Build Status](https://travis-ci.org/atom/whitespace.svg?branch=master)](https://travis-ci.org/atom/whitespace) [![Windows Build Status](https://ci.appveyor.com/api/projects/status/sf8pdb3ausdk1vtb/branch/master?svg=true)](https://ci.appveyor.com/project/Atom/whitespace/branch/master) [![Dependency Status](https://david-dm.org/atom/whitespace.svg)](https://david-dm.org/atom/whitespace)
 
 Strips trailing whitespace and adds a trailing newline when an editor is saved.
